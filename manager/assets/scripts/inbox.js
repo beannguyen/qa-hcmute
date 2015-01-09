@@ -53,57 +53,6 @@ var Inbox = function () {
         });
     };
 
-    var handleAddQuestion = function () {
-
-        $('#submit_question_form').validate({
-            errorElement: 'span', //default input error message container
-            errorClass: 'help-block', // default input error message class
-            focusInvalid: false, // do not focus the last invalid input
-            onkeyup: false,
-            ignore: "",
-            rules: {
-
-                title: {
-                    required: true,
-                    maxlength: 100
-                },
-                content: {
-                    required: true
-                }
-            },
-
-            messages: {
-
-                title: {
-                    required: "Hãy nhập tiêu đề câu hỏi",
-                    maxlength: "Tiêu đề chỉ dài 45 ký tự"
-                },
-                content: {
-                    required: "Nhập nội dung câu hỏi"
-                }
-            },
-
-            invalidHandler: function (event, validator) { //display error alert on form submit
-
-            },
-
-            highlight: function (element) { // hightlight error inputs
-                $(element)
-                    .closest('.form-group').addClass('has-error'); // set error class to the control group
-            },
-
-            success: function (label) {
-                label.closest('.form-group').removeClass('has-error');
-                label.remove();
-            },
-
-            submitHandler: function (form) {
-
-                form.submit();
-            }
-        });
-    };
-
     var loadInbox = function (el, name) {
         var url = 'inbox_inbox.php';
         var title = $('.inbox-nav > li.' + name + ' a').attr('data-title');
@@ -136,7 +85,33 @@ var Inbox = function () {
             },
             async: false
         });
-    }
+    };
+
+    var loadCategory = function (id, name) {
+
+        var url = 'inbox_inbox.php?field=' + id;
+
+        loading.show();
+        content.html('');
+
+        $.ajax({
+            type: "GET",
+            cache: false,
+            url: url,
+            dataType: "html",
+            success: function(res)
+            {
+                loading.hide();
+                content.html(res);
+                App.fixContentHeight();
+                App.initUniform();
+            },
+            error: function(xhr, ajaxOptions, thrownError)
+            {
+            },
+            async: false
+        });
+    };
 
 
     var loadMessage = function (el, id, name, resetMenu) {
@@ -415,11 +390,6 @@ var Inbox = function () {
                 loadInbox($(this), 'inbox');
             });
 
-            // handle sent listing
-            $('.inbox-nav > li.add > a').click(function () {
-                loadAddQuestion($(this), 'add');
-            });
-
             // handle draft listing
             $('.inbox-nav > li.draft > a').click(function () {
                 loadInbox($(this), 'draft');
@@ -431,12 +401,14 @@ var Inbox = function () {
             });
 
             handleReply();
-            handleAddQuestion();
-
 
             //handle loading content based on URL parameter
             if (App.getURLParameter("a") === "view") {
                 loadMessage();
+            } else if ( App.getURLParameter('field') != null ) {
+
+                var categoryId = App.getURLParameter('field');
+                loadCategory( categoryId );
             } else {
                $('.inbox-nav > li.inbox > a').click();
             }

@@ -424,7 +424,6 @@ class Dashboard extends Generic
         }
         $data['author_stuID'] = 0;
         $data['author_name'] = 'Ý kiến sinh viên';
-        $data['author_email'] = $this->getOption('mailserver_login');
         $data['i_am'] = 'admin';
 
         // add question information
@@ -455,6 +454,16 @@ class Dashboard extends Generic
                             (". $data['question_field'] .",
                             ". $questionId .",
                             'field');";
+        $this->db->query( $sql );
+
+        // add reply
+        $sql = "INSERT INTO answers(author_id, content, date)
+                VALUES (0, '". $data['message'] ."', '". $this->timer->getDateTime() ."')";
+        $query = $this->db->query( $sql );
+        $answerId = $this->db->insertid( $query );
+
+        // add QA relationship
+        $sql = "INSERT INTO QA_relationships(question_id, answer_id) VALUES (". $questionId .", ". $answerId .")";
         $this->db->query( $sql );
 
         $_SESSION['ithcmute']['action_status'] = 'success';

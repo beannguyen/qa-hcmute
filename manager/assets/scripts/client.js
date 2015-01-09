@@ -67,6 +67,15 @@ var Client = function () {
 
             messages: {
 
+                author_stuID: {
+                    number: "MSSV phải là số",
+                    minlength: "MSSV dài ít nhất 8 ký tự"
+                },
+                author_phone_number: {
+                    minlength: "Số điện thoại ít nhất 10 số",
+                    maxlength: "Số điện thoại nhiều nhất 11 số",
+                    number: "Số điện thoại chưa đúng"
+                },
                 author_name: {
                     required: "Bạn phải nhập họ tên"
                 },

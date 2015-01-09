@@ -13,8 +13,15 @@ $sql = "select questions.*
         from questions, term_relationships, terms
         where questions.id = term_relationships.object_id
         and terms.term_id = term_relationships.term_id
-        and term_relationships.type = 'field'
-        order by questions.date desc";
+        and term_relationships.type = 'field'";
+// filter by question field
+$field = '';
+if ( isset( $_GET['field'] ) ) {
+
+    $field = $_GET['field'];
+    $sql .= " and term_relationships.term_id = " . $field;
+}
+$sql .= " order by questions.date desc";
 
 /* init page navigation plugin */
 // current url

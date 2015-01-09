@@ -102,6 +102,7 @@ var Profile = function () {
             
             $('#reset-submit').click(function () {
 
+                $("span.reset-loading").html("<img src='"+ getRootWebSitePath() +"/manager/assets/img/loading.gif'>");
                 var user_id = $('#change_password_form #user_id').val();
                 var datastring = 'reset_password=1&user_id=' + user_id;
 
@@ -112,9 +113,10 @@ var Profile = function () {
                     async: false,
                     success: function (responseText) {
 
-                        console.log( responseText );
+                        // console.log( responseText );
                         $("span.reset-loading").html("");
-                        $('.alert-new-password').text( 'Mật khẩu mới của bạn là: ' + responseText );
+                        $('.alert-new-password').text( 'Mật khẩu mới của bạn là: ' + responseText + '. Vui lòng kiểm tra Email người dùng để lấy mật khẩu mới.' );
+                        $('.alert-new-password').show();
                     }
                 });
             });

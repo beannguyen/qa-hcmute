@@ -177,6 +177,27 @@ $db->connect();
                     <li>
                         <a href="#">Câu hỏi</a>
                     </li>
+                    <li class="category-filter pull-right">
+                        <div class="btn-group">
+                            <a class="btn default red" href="#" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+                                Lọc kết quả
+                                <i class="icon-angle-down"></i>
+                            </a>
+                            <ul class="dropdown-menu pull-right">
+                                <li><a href="questions.php"><i class="i"></i> Tất cả câu hỏi</a></li>
+                                <li class="divider"></li>
+                                <?php
+                                $query = $db->query( "SELECT * FROM terms WHERE type = 'field'" );
+                                while ( $row = $db->fetch( $query ) ) {
+
+                                    ?>
+                                    <li class="field-li"><a href="questions.php?field=<?php echo $row['term_id']; ?>" data-toggle="<?php echo $row['term_id']; ?>"><?php echo $row['name']; ?></a></li>
+                                <?php
+                                }
+                                ?>
+                            </ul>
+                        </div>
+                    </li>
                 </ul>
                 <!-- END PAGE TITLE & BREADCRUMB-->
             </div>
@@ -227,7 +248,19 @@ $db->connect();
                 }
                 ?>
                 <div class="inbox-header">
-                    <h1 class="pull-left">All</h1>
+                    <?php
+                    if ( isset( $_GET['field'] ) ) {
+                        $sql = "SELECT name FROM terms WHERE term_id = " . $_GET['field'];
+                        $query = $db->query( $sql );
+
+                        $field = $db->fetch( $query )['name'];
+                        echo '<h1 class="pull-left">'. $field .'</h1>';
+                    } else {
+                        ?>
+                        <h1 class="pull-left">All</h1>
+                    <?php
+                    }
+                    ?>
                 </div>
                 <div class="inbox-loading">Loading...</div>
                 <div class="inbox-content"></div>
@@ -237,61 +270,80 @@ $db->connect();
     <!-- END PAGE -->
 
     <!-- MODAL -->
-    <div class="modal fade" id="add_question" tabindex="-1" role="basic" aria-hidden="true">
-        <div class="modal-dialog">
+    <div class="modal fade bs-modal-lg in" id="add_question" tabindex="-1" role="basic" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
                     <h4 class="modal-title">Thêm câu hỏi <span class="loading"></span></h4>
                 </div>
                 <div class="modal-body form">
-                    <form id="submit_question_form" class="form-horizontal" action="questions.php" method="post" role="form">
-                        <div class="form-body">
 
-                            <div class="form-group">
-                                <label  class="col-md-3 control-label">Lĩnh vực</label>
-                                <div class="col-md-9">
-                                    <select name="question_field" class="form-control">
-                                        <?php
-                                        $query = $db->query( "SELECT * FROM terms WHERE type = 'field'" );
-                                        while ( $row = $db->fetch( $query ) ) {
-
-                                            ?>
-                                            <option value="<?php echo $row['term_id']; ?>"><?php echo $row['name']; ?></option>
-                                        <?php
-                                        }
-                                        ?>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-lg-3 control-label">Tiêu đề</label>
-
-                                <div class="col-lg-9">
-                                    <input class="form-control" name="title" type="text">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label  class="col-md-3 control-label">Nội dung</label>
-                                <div class="col-md-9">
-                                    <textarea class="form-control" name="content" rows="3"></textarea>
-                                </div>
-                            </div>
-
+                    <form class="inbox-compose form-horizontal" id="fileupload" action="inbox_reply.php" method="POST">
+                        <div class="inbox-compose-btn">
+                            <button type="submit" class="btn blue"><i class="icon-check"></i>Send</button>
                         </div>
-                        <div class="form-actions fluid">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="col-md-offset-3 col-md-9">
-                                        <input name="new-question" type="hidden" value="1" />
-                                        <button type="submit" class="btn green"><i class="icon-ok"></i> Gửi <span class="loading"></span></button>
-                                    </div>
+                        <div class="inbox-form-group mail-to">
+                            <label class="control-label">Tới:</label>
+
+                            <div class="controls controls-to">
+                                <input type="email" class="form-control" name="author_email"
+                                       value="">
+                            </div>
+                        </div>
+
+                        <div class="inbox-form-group">
+                            <label  class="control-label">Lĩnh vực</label>
+                            <div class="controls">
+                                <select name="question_field" class="form-control">
+                                    <?php
+                                    $query = $db->query( "SELECT * FROM terms WHERE type = 'field'" );
+                                    while ( $row = $db->fetch( $query ) ) {
+
+                                        ?>
+                                        <option value="<?php echo $row['term_id']; ?>"><?php echo $row['name']; ?></option>
+                                    <?php
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="inbox-form-group">
+                            <label class="control-label">Tiêu đề:</label>
+
+                            <div class="controls">
+                                <input type="text" class="form-control" name="title" value="">
+                            </div>
+                        </div>
+                        <div class="inbox-form-group">
+                            <label class="control-label">Nội dung</label>
+                            <div class="controls">
+                                <textarea name="content" class="form-control" rows="3"></textarea>
+                            </div>
+                        </div>
+                        <div class="inbox-form-group">
+                            <label  class="control-label">Chế độ</label>
+                            <div class="radio-list">
+                                <label class="radio-inline">
+                                    <input type="radio" name="type" id="optionsRadios4" value="public" checked> Công khai
+                                </label>
+                            </div>
+                        </div>
+                        <div class="inbox-form-group">
+                            <div class="controls-row">
+                                <textarea class="inbox-editor inbox-wysihtml5-2 form-control" id="message" name="message" rows="12"></textarea>
+                                <!--blockquote content for reply message, the inner html of reply_email_content_body element will be appended into wysiwyg body. Please refer Inbox.js loadReply() function. -->
+                                <div id="reply_email_content_body" class="hide">
                                 </div>
                             </div>
+                        </div>
+                        <input type="hidden" name="new-question" value="1" />
+                        <div class="inbox-compose-btn">
+                            <button type="submit" class="btn blue"><i class="icon-check"></i>Send</button>
                         </div>
                     </form>
+
                 </div>
             </div>
             <!-- /.modal-content -->

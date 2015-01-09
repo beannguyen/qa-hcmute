@@ -76,12 +76,12 @@ class Frontend extends Generic
         $to = $this->getOption('mailserver_login');
         $subj = "Có một câu hỏi mới : '" . $data['title'] . "'";
         $subj = "=?utf-8?b?".base64_encode( $subj )."?=";
-        $msg = '<strong>Hệ thống nhận được một câu hỏi mới vào lúc ' . $this->timer->getDateTime() . '</strong><br />';
+        $msg = '<span>Hệ thống quản lý câu hỏi của Ban tư vấn sinh viên <strong>khoa Công Nghệ Thông Tin - Trường Đại học Sư Phạm Kỹ Thuật Tp.HCM</strong> đã nhận được một câu hỏi mới vào lúc <em>' . $this->timer->getDateTime() . '</em></span><br />';
         $msg .= '<blockquote>
-                    <h3>Tiêu đề: "'. $data['title'] .'"</h3>
+                    <strong>Tiêu đề: "'. $data['title'] .'"</strong>
                     <span>Nội dung: "'. $data['content'] .'"</span>
                 </blockquote>';
-        $msg .= '<span>Vui lòng <a href="http://localhost/hcmute/manager/fqa/questions.php">Nhấn vào đây</a> để kiểm tra</span>';
+        $msg .= '<span>Vui lòng <a href="http://localhost/hcmute/manager/fqa/questions.php">Nhấn vào đây</a> để kiểm tra và trả lời</span>';
         // init mailer
         $sender = new Mailer();
         $debug = $sender->send($to, $subj, $msg, $headers);

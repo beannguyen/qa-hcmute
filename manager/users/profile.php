@@ -253,6 +253,9 @@ if ( isset ( $_SESSION['ithcmute']['action_status'] ) ) {
                                             <span class="after"></span>
                                         </li>
                                         <li ><a data-toggle="tab" href="#tab_3-3"><i class="icon-lock"></i> Đổi mật khẩu</a></li>
+                                        <?php if ( $_SESSION['ithcmute']['user_id'] == 0 ) : ?>
+                                            <li ><a id="reset-submit" href="javascript:;"><i class="icon-lock"></i> Reset mật khẩu <span class="reset-loading"></span></a></li>
+                                        <?php endif; ?>
                                         <li ><a data-toggle="tab" href="#tab_3-4"><i class="icon-camera"></i> Ảnh đại diện</a></li>
                                         <?php if ( $_SESSION['ithcmute']['user_id'] == 0 ) : ?>
                                         <li ><a data-toggle="tab" href="#tab_4-4"><i class="icon-eye-open"></i> Phân quyền</a></li>
@@ -271,6 +274,7 @@ if ( isset ( $_SESSION['ithcmute']['action_status'] ) ) {
                                                 <strong>Đã xảy ra lỗi!</strong> Vui lòng thử lại.
                                             </div>
                                         <?php endif; ?>
+                                        <div class="alert alert-success alert-new-password display-hide"></div>
                                         <div id="tab_1-1" class="tab-pane active">
                                             <form role="form" action="profile.php" method="post">
                                                 <div class="form-group">
@@ -312,7 +316,6 @@ if ( isset ( $_SESSION['ithcmute']['action_status'] ) ) {
                                             </form>
                                         </div>
                                         <div id="tab_3-3" class="tab-pane">
-                                            <div class="alert alert-success alert-new-password display-hide"></div>
                                             <form id="change_password_form" action="profile.php" method="post">
                                                 <div class="form-group">
                                                     <label class="control-label">Mật khẩu hiện tại</label>
@@ -330,9 +333,6 @@ if ( isset ( $_SESSION['ithcmute']['action_status'] ) ) {
                                                 <input type="hidden" name="change_password" value="1" />
                                                 <div class="margin-top-10">
                                                     <button type="submit" class="btn green">Đổi mật khẩu <span class="loading"></span></button>
-                                                    <?php if ( $_SESSION['ithcmute']['user_id'] == 0 ) : ?>
-                                                    <button type="button" id="reset-submit" class="btn red">Reset mật khẩu <span class="reset-loading"></span></button>
-                                                    <?php endif; ?>
                                                 </div>
                                             </form>
                                         </div>
