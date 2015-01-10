@@ -81,7 +81,7 @@ class Frontend extends Generic
                     <strong>Tiêu đề: "'. $data['title'] .'"</strong>
                     <span>Nội dung: "'. $data['content'] .'"</span>
                 </blockquote>';
-        $msg .= '<span>Vui lòng <a href="http://localhost/hcmute/manager/fqa/questions.php">Nhấn vào đây</a> để kiểm tra và trả lời</span>';
+        $msg .= '<span>Vui lòng <a href="'. BASE_PATH .'manager/fqa/questions.php">Nhấn vào đây</a> để kiểm tra và trả lời</span>';
         // init mailer
         $sender = new Mailer();
         $debug = $sender->send($to, $subj, $msg, $headers);
