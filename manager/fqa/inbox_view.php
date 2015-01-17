@@ -170,6 +170,12 @@ $result = $db->fetch( $query );
 
         ?>
         <li id="item-<?php echo $row['id']; ?>" class="out">
+            <?php
+            $sql = "SELECT meta_value FROM user_meta WHERE meta_key = 'profile_img' AND user_id = " . $row['author_id'];
+            $q = $db->query( $sql );
+            $avatar = $db->fetch( $q )['meta_value'];
+            ?>
+            <img class="avatar img-responsive" alt="" src="../<?php echo $avatar; ?>" />
             <div class="message">
                 <a class="name"><?php echo $row['fullname']; ?></a>
                 <span class="datetime">lúc <?php echo $row['date']; ?></span>
@@ -183,5 +189,6 @@ $result = $db->fetch( $query );
     <?php
     }
     ?>
+
     </ul>
 </div>
