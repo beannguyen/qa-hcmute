@@ -29,7 +29,6 @@ $db->connect();
     <link href="../assets/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css"/>
     <!-- END GLOBAL MANDATORY STYLES -->
     <!-- BEGIN PAGE LEVEL STYLES -->
-    <link href="../assets/plugins/bootstrap-wysihtml5/bootstrap-wysihtml5.css" rel="stylesheet" type="text/css" />
     <link href="../assets/plugins/fancybox/source/jquery.fancybox.css" rel="stylesheet" />
     <!-- END PAGE LEVEL STYLES -->
     <!-- BEGIN THEME STYLES -->
@@ -39,11 +38,16 @@ $db->connect();
     <link href="../assets/css/plugins.css" rel="stylesheet" type="text/css"/>
     <link href="../assets/css/themes/default.css" rel="stylesheet" type="text/css" id="style_color"/>
     <link href="../assets/css/pages/inbox.css" rel="stylesheet" type="text/css"/>
+    <link href="../assets/css/pages/tasks.css" rel="stylesheet" type="text/css"/>
     <link href="../assets/css/custom.css" rel="stylesheet" type="text/css"/>
     <!-- END THEME STYLES -->
     <!-- BEGIN PAGE LEVEL STYLES -->
-    <link href="../assets/plugins/bootstrap-wysihtml5/bootstrap-wysihtml5.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../assets/plugins/bootstrap3-wysihtml5/src/bootstrap3-wysihtml5.css" />
+    <link rel="stylesheet" type="text/css" href="../assets/plugins/bootstrap3-wysihtml5/src/bootstrap3-wysihtml5-editor.css" />
     <link href="../assets/plugins/fancybox/source/jquery.fancybox.css" rel="stylesheet" />
+
+
+    <script src="../assets/plugins/jquery-1.10.2.min.js" type="text/javascript"></script>
     <!-- END PAGE LEVEL STYLES -->
     <link rel="shortcut icon" href="../assets/favicon.ico"/>
 </head>
@@ -187,11 +191,13 @@ $db->connect();
                                 <li><a href="questions.php"><i class="i"></i> Tất cả câu hỏi</a></li>
                                 <li class="divider"></li>
                                 <?php
+
                                 $query = $db->query( "SELECT * FROM terms WHERE type = 'field'" );
+
                                 while ( $row = $db->fetch( $query ) ) {
 
                                     ?>
-                                    <li class="field-li"><a href="questions.php?field=<?php echo $row['term_id']; ?>" data-toggle="<?php echo $row['term_id']; ?>"><?php echo $row['name']; ?></a></li>
+                                    <li class="field-li"><a href="javascript:;" data-title="<?php echo $row['name']; ?>" data-toggle="<?php echo $row['term_id']; ?>"><?php echo $row['name']; ?></a></li>
                                 <?php
                                 }
                                 ?>
@@ -209,6 +215,10 @@ $db->connect();
                     </li>
                     <li class="inbox active">
                         <a href="javascript:;" class="btn" data-title="Tất cả câu hỏi">Tất cả</a>
+                        <b></b>
+                    </li>
+                    <li class="inbox-admin">
+                        <a href="javascript:;" class="btn" data-title="Tất cả câu hỏi nhập">DS câu hỏi nhập</a>
                         <b></b>
                     </li>
                     <li class="add">
@@ -279,16 +289,20 @@ $db->connect();
                 </div>
                 <div class="modal-body form">
 
-                    <form class="inbox-compose form-horizontal" id="fileupload" action="inbox_reply.php" method="POST">
+                    <form class="inbox-compose form-horizontal" id="fileupload" action="questions.php" method="POST">
                         <div class="inbox-compose-btn">
-                            <button type="submit" class="btn blue"><i class="icon-check"></i>Send</button>
+                            <button type="submit" class="btn blue"><i class="icon-check"></i>Submit</button>
                         </div>
                         <div class="inbox-form-group mail-to">
-                            <label class="control-label">Tới:</label>
+                            <label class="control-label"></label>
 
-                            <div class="controls controls-to">
-                                <input type="email" class="form-control" name="author_email"
-                                       value="">
+                            <div class="controls">
+                                <?php
+                                $sql = "SELECT count(*) as num FROM questions WHERE i_am = 'admin'";
+                                $query = $db->query( $sql );
+                                $n = $db->fetch($query)['num'] + 1;
+                                ?>
+                                <input type="text" class="form-control" name="author_name" value="Câu hỏi <?php echo $n; ?>" disabled>
                             </div>
                         </div>
 
@@ -309,7 +323,7 @@ $db->connect();
                             </div>
                         </div>
 
-                        <div class="inbox-form-group">
+                        <div class="inbox-form-group display-hide">
                             <label class="control-label">Tiêu đề:</label>
 
                             <div class="controls">
@@ -319,7 +333,7 @@ $db->connect();
                         <div class="inbox-form-group">
                             <label class="control-label">Nội dung</label>
                             <div class="controls">
-                                <textarea name="content" class="form-control" rows="3"></textarea>
+                                <textarea name="content" class="form-control inbox-wysihtml5-1" rows="3"></textarea>
                             </div>
                         </div>
                         <div class="inbox-form-group">
@@ -330,17 +344,16 @@ $db->connect();
                                 </label>
                             </div>
                         </div>
-                        <div class="inbox-form-group">
-                            <div class="controls-row">
-                                <textarea class="inbox-editor inbox-wysihtml5-2 form-control" id="message" name="message" rows="12"></textarea>
-                                <!--blockquote content for reply message, the inner html of reply_email_content_body element will be appended into wysiwyg body. Please refer Inbox.js loadReply() function. -->
-                                <div id="reply_email_content_body" class="hide">
+                        <div id="wysihtml5-editor" class="inbox-form-group">
+                            <label class="control-label">Trả lời</label>
+                            <div class="controls">
+                                <textarea class="inbox-editor inbox-wysihtml5-2 form-control" id="message" name="message" rows="3"></textarea>
                                 </div>
                             </div>
                         </div>
                         <input type="hidden" name="new-question" value="1" />
                         <div class="inbox-compose-btn">
-                            <button type="submit" class="btn blue"><i class="icon-check"></i>Send</button>
+                            <button type="submit" class="btn blue"><i class="icon-check"></i>Submit</button>
                         </div>
                     </form>
 
@@ -362,7 +375,6 @@ $db->connect();
 <script src="../assets/plugins/respond.min.js"></script>
 <script src="../assets/plugins/excanvas.min.js"></script>
 <![endif]-->
-<script src="../assets/plugins/jquery-1.10.2.min.js" type="text/javascript"></script>
 <script src="../assets/plugins/jquery-migrate-1.2.1.min.js" type="text/javascript"></script>
 <!-- IMPORTANT! Load jquery-ui-1.10.3.custom.min.js before bootstrap.min.js to fix bootstrap tooltip conflict with jquery ui tooltip -->
 <script src="../assets/plugins/jquery-ui/jquery-ui-1.10.3.custom.min.js" type="text/javascript"></script>
@@ -376,8 +388,9 @@ $db->connect();
 <!-- END CORE PLUGINS -->
 <!-- BEGIN: Page level plugins -->
 <script src="../assets/plugins/fancybox/source/jquery.fancybox.pack.js" type="text/javascript" ></script>
-<script src="../assets/plugins/bootstrap-wysihtml5/wysihtml5-0.3.0.js" type="text/javascript" ></script>
-<script src="../assets/plugins/bootstrap-wysihtml5/bootstrap-wysihtml5.js" type="text/javascript" ></script>
+<script src="../assets/plugins/bootstrap3-wysihtml5/lib/js/wysihtml5x-toolbar.min.js"></script>
+<script src="../assets/plugins/bootstrap3-wysihtml5/src/bootstrap3-wysihtml5.js"></script>
+<script src="../assets/plugins/bootstrap-wysihtml5/advanced.js" type="text/javascript"></script>
 <script type="text/javascript" src="../assets/plugins/jquery-validation/dist/jquery.validate.min.js"></script>
 <!-- END: Page level plugins -->
 <script src="../assets/scripts/app.js"></script>

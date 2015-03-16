@@ -2,6 +2,7 @@ var Inbox = function () {
 
     var content = $('.inbox-content');
     var loading = $('.inbox-loading');
+    var typeListing = 'all';
 
     var handleReply = function () {
 
@@ -53,9 +54,33 @@ var Inbox = function () {
         });
     };
 
-    var loadInbox = function (el, name) {
-        var url = 'inbox_inbox.php';
+    var loadInbox = function (el, name, type, element) {
+        var url = '';
+        if ( type === 'inbox-listing' ) {
+
+            url = 'inbox_inbox.php';
+            typeListing = 'all';
+        }
+        else if ( type === 'admin-listing' ) {
+
+            url = 'inbox_inbox.php?type=admin';
+            typeListing = 'admin';
+        }
+        else if ( type === 'field-listing' ) {
+
+            var field = $(element).attr('data-toggle');
+            if ( typeListing === 'admin' )
+                url = 'inbox_inbox.php?type=admin&field=' + field;
+            else
+                url = 'inbox_inbox.php?field=' + field;
+        }
+
         var title = $('.inbox-nav > li.' + name + ' a').attr('data-title');
+
+        if ( type === 'field-listing' ) {
+
+            title += " - " + $(element).attr('data-title');
+        }
 
         loading.show();
         content.html('');
@@ -66,7 +91,7 @@ var Inbox = function () {
             cache: false,
             url: url,
             dataType: "html",
-            success: function(res) 
+            success: function(res)
             {
                 toggleButton(el);
 
@@ -76,6 +101,8 @@ var Inbox = function () {
 
                 loading.hide();
                 content.html(res);
+                if ( $('.wysihtml5-toolbar').length == 0 )
+                    initWysihtml5_2();
                 App.fixContentHeight();
                 App.initUniform();
             },
@@ -152,6 +179,33 @@ var Inbox = function () {
 
     }
 
+    var loadRelatedQuestion = function(el) {
+
+        console.log('clicked');
+        var keyword = $('.inbox-content #subject').val();
+        var id = $('.inbox-content #question_id').val();
+        var url = 'related-question.php?id='+ id +'&keyword=' + keyword;
+        toggleButton(el);
+        
+        $.ajax({
+            type: "GET",
+            cache: false,
+            url: url,
+            dataType: "html",
+            success: function(res) 
+            {
+                toggleButton(el);
+                $('.related-questions-content').html(res);
+                $('.open-modal-cau-hoi-goi-y').click();
+            },
+            error: function(xhr, ajaxOptions, thrownError)
+            {
+                toggleButton(el);
+            },
+            async: false
+        });
+    }
+
     var loadNavigation = function( el, url, name, resetMenu ) {
 
         loading.show();
@@ -185,9 +239,33 @@ var Inbox = function () {
         });
     }
 
-    var initWysihtml5 = function () {
-        $('.inbox-wysihtml5').wysihtml5({
-            "stylesheets": ["assets/plugins/bootstrap-wysihtml5/wysiwyg-color.css"]
+    var initWysihtml5_2 = function () {
+        $('.inbox-wysihtml5-1').wysihtml5({
+            "font-styles":  true, //Font styling, e.g. h1, h2, etc
+            "color":        false, //Button to change color of font
+            "emphasis":     true, //Italics, bold, etc
+            "textAlign":    true, //Text align (left, right, center, justify)
+            "lists":        true, //(Un)ordered lists, e.g. Bullets, Numbers
+            "blockquote":   false, //Button to insert quote
+            "link":         false, //Button to insert a link
+            "table":        false, //Button to insert a table
+            "image":        false, //Button to insert an image
+            "video":        false, //Button to insert video
+            "html":         false //Button which allows you to edit the generated HTML
+        });
+
+        $('.inbox-wysihtml5-2').wysihtml5({
+            "font-styles":  true, //Font styling, e.g. h1, h2, etc
+            "color":        false, //Button to change color of font
+            "emphasis":     true, //Italics, bold, etc
+            "textAlign":    true, //Text align (left, right, center, justify)
+            "lists":        true, //(Un)ordered lists, e.g. Bullets, Numbers
+            "blockquote":   false, //Button to insert quote
+            "link":         false, //Button to insert a link
+            "table":        false, //Button to insert a table
+            "image":        false, //Button to insert an image
+            "video":        false, //Button to insert video
+            "html":         false //Button which allows you to edit the generated HTML
         });
     }
 
@@ -216,7 +294,6 @@ var Inbox = function () {
                 $('[name="message"]').val($('#reply_email_content_body').html());
 
 
-                initWysihtml5();
                 App.fixContentHeight();
                 App.initUniform();
             },
@@ -263,7 +340,7 @@ var Inbox = function () {
             },
             async: false
         });
-    }
+    };
 
     var moveToSpam = function ( id ) {
 
@@ -277,7 +354,7 @@ var Inbox = function () {
                 data: datastring,
                 async: false,
                 success: function (responseText) {
-                    console.log( responseText);
+                    // console.log( responseText);
                     if ( responseText === '1' ) {
 
                         $('.reply-btn').addClass('disabled');
@@ -379,6 +456,11 @@ var Inbox = function () {
                 loadMessage($(this), $(this).attr('data-action'));
             });
 
+            // load cau hoi goi y - modal
+            $('.inbox-compose .cau-hoi-goi-y').live('click', function() {
+                loadRelatedQuestion($(this));
+            });
+
             // handle btn-prev navigation
             $('.inbox-content .btn-next, .btn-prev').live('click', function () {
 
@@ -387,7 +469,20 @@ var Inbox = function () {
 
             // handle inbox listing
             $('.inbox-nav > li.inbox > a').click(function () {
-                loadInbox($(this), 'inbox');
+                loadInbox($(this), 'inbox', 'inbox-listing');
+            });
+
+            // handle admin inbox listing
+            $('.inbox-nav > li.inbox-admin > a').click(function () {
+                loadInbox($(this), 'inbox-admin', 'admin-listing');
+            });
+
+            $('.dropdown-menu > li > a').click(function (e) {
+
+                if ( typeListing === 'admin')
+                    loadInbox($(this), 'inbox-admin', 'field-listing', e.target);
+                else
+                    loadInbox($(this), 'inbox', 'field-listing', e.target);
             });
 
             // handle draft listing

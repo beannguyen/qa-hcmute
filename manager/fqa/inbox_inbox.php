@@ -14,6 +14,11 @@ $sql = "select questions.*
         where questions.id = term_relationships.object_id
         and terms.term_id = term_relationships.term_id
         and term_relationships.type = 'field'";
+
+if ( isset( $_GET['type'] ) && $_GET['type'] == 'admin' ) {
+
+    $sql .= " and questions.i_am = '". $_GET['type'] ."'";
+}
 // filter by question field
 $field = '';
 if ( isset( $_GET['field'] ) ) {
@@ -32,8 +37,17 @@ if ( isset( $_GET['page'] ) )
 else
     $page = 1;
 
+//
+$append = '';
+if ( isset( $_GET['type'] ) )
+    $append .= 'type=admin';
+if ( isset( $_GET['field'] ) && !isset( $_GET['type'] ) )
+    $append .= 'field=' . $_GET['field'];
+elseif ( isset( $_GET['field'] ) && isset( $_GET['type'] ) )
+    $append .= '&field=' . $_GET['field'];
+
 // init
-$pager = new PageNavigation($sql, 15, 5, $url, $page, '', 'backend');
+$pager = new PageNavigation($sql, 15, 5, $url, $page, $append, 'backend');
 
 // get sql added limit
 $newSql = $pager->paginate();

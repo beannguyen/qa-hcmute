@@ -51,6 +51,25 @@ $db->connect();
         </div>
     </div>
     <div class="col-md-9">
+        <form action="reports.php" method="post">
+            <button type="submit" class="btn blue pull-right">
+                Xuất Báo Cáo
+            </button>
+            <input type="hidden" name="start-date" value="<?php if ( isset ( $_GET['start'] ) ) { echo $_GET['start']; } else echo ''; ?>" />
+            <input type="hidden" name="end-date" value="<?php if ( isset ( $_GET['end'] ) ) { echo $_GET['end']; } else echo ''; ?>" />
+            <input type="hidden" name="export-report-xlsx" value="1" />
+        </form>
+        <form action="reports.php" method="post">
+            <button type="submit" class="btn blue pull-right">
+                Xuất Câu hỏi
+            </button>
+            <input type="hidden" name="start-date" value="<?php if ( isset ( $_GET['start'] ) ) { echo $_GET['start']; } else echo ''; ?>" />
+            <input type="hidden" name="end-date" value="<?php if ( isset ( $_GET['end'] ) ) { echo $_GET['end']; } else echo ''; ?>" />
+            <input type="hidden" name="export-list-xlsx" value="1" />
+        </form>
+        <br />
+        <hr />
+
         <div class="portlet box blue">
             <div class="portlet-title">
                 <div class="caption"><i class="icon-bar-chart"></i>Thành viên tích cực</div>

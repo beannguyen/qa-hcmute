@@ -546,13 +546,16 @@ class Generic extends Connect
         endif;
     }
 
-    public function vietnamese_permalink($title)
+    public function vietnamese_permalink($title, $search = false)
     {
         /* 	Replace with "-"
             Change it if you want
         */
 
-        $replacement = '-';
+        if ( $search )
+            $replacement = '%';
+        else
+            $replacement = '-';
         $map = array();
         $quotedReplacement = preg_quote($replacement, '/');
 

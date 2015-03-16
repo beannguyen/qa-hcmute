@@ -19,7 +19,7 @@ class upload extends Generic
         // process to upload file
         $imageSrc = $this->process();
         var_dump( $imageSrc );
-        return;
+        exit();
         if ( $imageSrc == false ) {
 
             $_SESSION['ithcmute']['action_status'] = 'not_allowed';

@@ -30,7 +30,7 @@ $result = $db->fetch( $query );
     <div class="row">
         <div class="col-md-7">
             <a data-toggle="modal" href="#user_information" class="bold"><?php echo $result['author_name']; ?></a>
-            <span>&#60;<?php echo $result['author_email']; ?>&#62;</span> <br />lúc <?php echo $timer->timeFormat( $result['date'], 'H:i A d M Y' ); ?>
+            <?php if($result['i_am'] != 'admin') { ?><span>&#60;<?php echo $result['author_email']; ?>&#62;</span><?php } ?> <br />lúc <?php echo $timer->timeFormat( $result['date'], 'H:i A d M Y' ); ?>
             <span id="spam-label" class="label label-default <?php if ( $result['type'] !== 'spam' ) echo 'display-hide'; ?>">Spam</span>
         </div>
         <!-- modal -->
@@ -57,9 +57,12 @@ $result = $db->fetch( $query );
                                                 } elseif ( $result['i_am'] === 'old-student' ) {
 
                                                     echo 'Cựu sinh viên';
-                                                } else {
+                                                } elseif ( $result['i_am'] === 'parent' ) {
 
                                                     echo 'Phụ huynh';
+                                                } else {
+
+                                                    echo "Câu hỏi hệ thống";
                                                 }
                                             ?>
                                         </strong>
@@ -153,7 +156,7 @@ $result = $db->fetch( $query );
 </div>
 
 <div class="inbox-view">
-    <?php echo $result['content']; ?>
+    <?php echo html_entity_decode($result['content']); ?>
 </div>
 <hr>
 <div class="inbox-attached">
@@ -175,7 +178,7 @@ $result = $db->fetch( $query );
             $q = $db->query( $sql );
             $avatar = $db->fetch( $q )['meta_value'];
             ?>
-            <img class="avatar img-responsive" alt="" src="../<?php echo $avatar; ?>" />
+            <img class="avatar img-responsive" alt="" src="../../<?php echo $avatar; ?>" />
             <div class="message">
                 <a class="name"><?php echo $row['fullname']; ?></a>
                 <span class="datetime">lúc <?php echo $row['date']; ?></span>

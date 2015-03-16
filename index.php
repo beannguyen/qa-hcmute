@@ -51,7 +51,16 @@ $db->connect();
         <div class="col-md-6 col-sm-6">
             <div class="portlet box blue">
                 <div class="portlet-title">
-                    <div class="caption"></div>
+                    <div class="caption">
+                        <?php 
+                            if ( isset($_GET['type']) && $_GET['type'] === 'admin' ) {
+                                
+                                echo "Câu hỏi nhập";
+                            } else {
+                                echo "Tất cả";
+                            }
+                        ?>
+                    </div>
                     <div id="action-bar" class="actions">
                         <a href="ask.php" class="btn btn-sm green"><i class="icon-plus"></i> Thêm câu hỏi</a>
                         <a href="index.php" class="btn btn-sm red"><i class="icon-bullhorn"></i>
@@ -63,13 +72,14 @@ $db->connect();
                             </a>
                             <ul class="dropdown-menu pull-right">
                                 <li><a href="index.php"><i class="i"></i> Tất cả câu hỏi</a></li>
+                                <li><a href="index.php?type=admin"><i class="i"></i> Câu hỏi nhập</a></li>
                                 <li class="divider"></li>
                                 <?php
                                 $query = $db->query( "SELECT * FROM terms WHERE type = 'field'" );
                                 while ( $row = $db->fetch( $query ) ) {
 
                                 ?>
-                                    <li><a href="index.php?field=<?php echo $row['term_id']; ?>"><?php echo $row['name']; ?></a></li>
+                                    <li><a href="index.php?field=<?php echo $row['term_id']; if(isset($_GET['type']) && $_GET['type'] === 'admin') echo "&type=admin"; ?>"><?php echo $row['name']; ?></a></li>
                                 <?php
                                 }
                                 ?>
@@ -88,6 +98,11 @@ $db->connect();
                             and questions.id = QA_relationships.question_id
                             and term_relationships.type = 'field'
                             and questions.type = 'public'";
+                    // filter by question author
+                    if ( isset($_GET['type']) && $_GET['type'] === 'admin' ) {
+                        
+                        $sql .= " and questions.i_am = 'admin'";
+                    }
                     // filter by question field
                     $field = '';
                     if ( isset( $_GET['field'] ) ) {
@@ -97,7 +112,6 @@ $db->connect();
                     }
                     $sql .= " group by QA_relationships.question_id";
                     $sql .= " order by questions.date desc";
-
                     /* init page navigation plugin */
                     // current url
                     $url = URL::curURL();
