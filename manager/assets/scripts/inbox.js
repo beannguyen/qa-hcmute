@@ -58,7 +58,7 @@ var Inbox = function () {
         var url = '';
         if ( type === 'inbox-listing' ) {
 
-            url = 'inbox_inbox.php';
+            url = 'inbox_inbox.php?view=all';
             typeListing = 'all';
         }
         else if ( type === 'admin-listing' ) {
@@ -75,6 +75,11 @@ var Inbox = function () {
                 url = 'inbox_inbox.php?field=' + field;
         }
 
+
+        if ( App.getURLParameter('page') != null ) {
+            url += '&page=' + App.getURLParameter('page');
+        }
+
         var title = $('.inbox-nav > li.' + name + ' a').attr('data-title');
 
         if ( type === 'field-listing' ) {
@@ -82,6 +87,7 @@ var Inbox = function () {
             title += " - " + $(element).attr('data-title');
         }
 
+        console.log(url);
         loading.show();
         content.html('');
         toggleButton(el);
@@ -141,11 +147,11 @@ var Inbox = function () {
     };
 
 
-    var loadMessage = function (el, id, name, resetMenu) {
+    var loadMessage = function (el, name, resetMenu) {
 
         var url = 'inbox_view.php';
-        if ( id !== '' )
-            var url = 'inbox_view.php?id=' + id;
+        if ( App.getURLParameter('qId') !== null )
+            var url = 'inbox_view.php?id=' + App.getURLParameter('qId');
 
         loading.show();
         content.html('');
@@ -270,7 +276,7 @@ var Inbox = function () {
     }
 
     var loadReply = function (el, id) {
-        var url = 'inbox_reply.php?id=' + id;
+        var url = 'inbox_reply.php?id=' + App.getURLParameter('qId');
 
         loading.show();
         content.html('');
@@ -306,7 +312,7 @@ var Inbox = function () {
     }
 
     var loadEditReply = function (el, answerId, questionId) {
-        var url = 'inbox_edit_reply.php?question_id=' + questionId + '&answer_id=' + answerId;
+        var url = 'inbox_edit_reply.php?question_id=' + App.getURLParameter('qId') + '&answer_id=' + App.getURLParameter('aId');
 
         loading.show();
         content.html('');
@@ -411,6 +417,61 @@ var Inbox = function () {
         }
     }
 
+    var loadSearchResult = function (el) {
+
+        var url = 'search_results.php?action=search';
+        if ( App.getURLParameter('question_type') != null ) {
+            url += '&question_type='+ App.getURLParameter('question_type');
+        } else {
+            url += '&question_type=any';
+        }
+        if ( App.getURLParameter('question_field') != null ) {
+            url += '&question_field='+ App.getURLParameter('question_field');
+        } else {
+            url += '&question_field=any';
+        }
+        if ( App.getURLParameter('keyword') != null ) {
+            url += '&keyword=' + App.getURLParameter('keyword');
+        } else {
+            url += '&keyword=';
+        }
+        if ( App.getURLParameter('page') != null ) {
+            url += '&page=' + App.getURLParameter('page');
+        }
+        console.log(url);
+
+        loading.show();
+        content.html('');
+        toggleButton(el);
+
+        // load the form via ajax
+        $.ajax({
+            type: "GET",
+            cache: false,
+            url: url,
+            dataType: "html",
+            success: function(res)
+            {
+                toggleButton(el);
+
+                $('.inbox-nav > li.active').removeClass('active');
+                $('.inbox-header > h1').text('Search results:');
+
+                loading.hide();
+                content.html(res);
+                $('[name="message"]').val($('#reply_email_content_body').html());
+
+                App.fixContentHeight();
+                App.initUniform();
+            },
+            error: function(xhr, ajaxOptions, thrownError)
+            {
+                toggleButton(el);
+            },
+            async: false
+        });
+    }
+
     var toggleButton = function(el) {
         if (typeof el == 'undefined') {
             return;
@@ -428,7 +489,8 @@ var Inbox = function () {
 
             // handle reply and forward button click
             $('.inbox .reply-btn').live('click', function () {
-                loadReply($(this), $(this).attr('data-action'));
+                //loadReply($(this), $(this).attr('data-action'));
+                window.location.href = "questions.php?view=reply&qId=" + $(this).attr('data-action');
             });
 
             $('.inbox .spam_btn').live('click', function () {
@@ -442,7 +504,8 @@ var Inbox = function () {
             });
 
             $('.inbox .edit_answer').live('click', function() {
-                loadEditReply($(this), $(this).attr('data-action'), $(this).attr('data-question'));
+                //loadEditReply($(this), $(this).attr('data-action'), $(this).attr('data-question'));
+                window.location.href = "questions.php?view=edit_answer&qId=" + $(this).attr('data-question') + "&aId=" + $(this).attr('data-action'); 
             });
 
             $('.inbox .delete_answer_btn').live('click', function() {
@@ -453,7 +516,7 @@ var Inbox = function () {
             // handle view message
             $('.inbox-content .view-message').live('click', function () {
 
-                loadMessage($(this), $(this).attr('data-action'));
+                window.location.href = "questions.php?view=message&qId=" + $(this).attr('data-action');
             });
 
             // load cau hoi goi y - modal
@@ -498,14 +561,50 @@ var Inbox = function () {
             handleReply();
 
             //handle loading content based on URL parameter
-            if (App.getURLParameter("a") === "view") {
+            if ( App.getURLParameter("action") === "search" ) {
+
+                loadSearchResult($(this));
+
+                // load current filter
+                if ( App.getURLParameter('question_type') != null || App.getURLParameter('question_type') !== 'any' ) {
+                    $('#question_type').val(App.getURLParameter('question_type'));
+                } else {
+                    $('#question_type').val('any');
+                }
+
+                if ( App.getURLParameter('question_field') != null || App.getURLParameter('question_field') !== 'any' ) {
+                    $('#question_field').val(App.getURLParameter('question_field'));
+                } else {
+                    $('#question_field').val('any');
+                }
+
+                if ( App.getURLParameter('keyword') != null || App.getURLParameter('keyword') !== '' ) {
+                    $('#keyword').val(App.getURLParameter('keyword').replace(/([.*+?^=!:${}()|\[\]\/\\])/gi, ' '));
+                } else {
+                    $('#keyword').val('');
+                }
+            } else if (App.getURLParameter("a") === "view") {
                 loadMessage();
             } else if ( App.getURLParameter('field') != null ) {
 
                 var categoryId = App.getURLParameter('field');
                 loadCategory( categoryId );
+            } else if ( App.getURLParameter('view') === 'all' ) {
+
+                loadInbox($(this), 'inbox', 'inbox-listing');
+            } else if ( App.getURLParameter('type') === 'admin' ) {
+
+                loadInbox($(this), 'inbox-admin', 'admin-listing');
+            } else if ( App.getURLParameter('view') === 'message') {
+
+                loadMessage($(this));
+            } else if ( App.getURLParameter('view') === 'reply' ) {
+
+                loadReply($(this));
+            } else if ( App.getURLParameter('view') === 'edit_answer' ) {
+                loadEditReply($(this));
             } else {
-               $('.inbox-nav > li.inbox > a').click();
+               window.location.href = "questions.php?view=all";
             }
 
         }

@@ -207,6 +207,13 @@ if ( isset( $_SESSION['ithcmute']['action-status'] ) ) {
         <!-- BEGIN PAGE CONTENT-->
         <div class="row">
             <div class="col-md-12">
+
+                <?php 
+                    if ( !$dashboard->getAction($_SESSION['ithcmute']['user_id'], 'can_change_system_settings') ) {
+                        echo "<h3>Bạn không có quyền truy cập vào trang này!</h3>";
+                        return false;
+                    }
+                ?>
                 <div class="portlet">
                     <div class="portlet-title">
                         <div class="caption"><i class="icon-reorder"></i>Cấu hình hộp thư</div>

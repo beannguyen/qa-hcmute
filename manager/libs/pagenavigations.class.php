@@ -118,12 +118,12 @@ class PageNavigation extends Connect {
             if ( $this->type === 'index' )
                 return '<a href="'. $url .'">Next <i class="m-icon-swapright m-icon-gray"></i></a> &nbsp;';
             else
-                return '<a data-action="'. $url .'" class="btn btn-sm blue btn-next"><i class="icon-angle-right"></i></a>';
+                return '<a href="'. $url .'" class="btn btn-sm blue btn-next"><i class="icon-angle-right"></i></a>';
         } else {
             if ( $this->type === 'index' )
                 return '<a href="javascript:;" class="disabled" disabled>Next <i class="m-icon-swapright m-icon-gray"></i></a> &nbsp;';
             else
-                return '<a data-action="" class="btn btn-sm blue btn-next" disabled><i class="icon-angle-right"></i></a>';
+                return '<a href="javascript:;" class="btn btn-sm blue btn-next" disabled><i class="icon-angle-right"></i></a>';
         }
     }
 
@@ -143,12 +143,12 @@ class PageNavigation extends Connect {
             if ( $this->type === 'index' )
                 return '<a href="'. $url .'"><i class="m-icon-swapleft m-icon-gray"></i> Prev</a> &nbsp;';
             else
-                return '<a data-action="'. $url .'" class="btn btn-sm blue btn-prev"><i class="icon-angle-left"></i></a>';
+                return '<a href="'. $url .'" class="btn btn-sm blue btn-prev"><i class="icon-angle-left"></i></a>';
         } else {
             if ( $this->type === 'index' )
                 return '<a href="javascript:;" class="disabled" disabled><i class="m-icon-swapleft m-icon-gray"></i> Prev</a> &nbsp;';
             else
-                return '<a data-action="" class="btn btn-sm blue btn-prev" disabled><i class="icon-angle-left"></i></a>';
+                return '<a href="javascript:;" class="btn btn-sm blue btn-prev" disabled><i class="icon-angle-left"></i></a>';
         }
     }
 

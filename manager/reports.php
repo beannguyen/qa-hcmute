@@ -51,22 +51,29 @@ $db->connect();
         </div>
     </div>
     <div class="col-md-9">
-        <form action="reports.php" method="post">
-            <button type="submit" class="btn blue pull-right">
-                Xuất Báo Cáo
-            </button>
-            <input type="hidden" name="start-date" value="<?php if ( isset ( $_GET['start'] ) ) { echo $_GET['start']; } else echo ''; ?>" />
-            <input type="hidden" name="end-date" value="<?php if ( isset ( $_GET['end'] ) ) { echo $_GET['end']; } else echo ''; ?>" />
-            <input type="hidden" name="export-report-xlsx" value="1" />
-        </form>
-        <form action="reports.php" method="post">
-            <button type="submit" class="btn blue pull-right">
-                Xuất Câu hỏi
-            </button>
-            <input type="hidden" name="start-date" value="<?php if ( isset ( $_GET['start'] ) ) { echo $_GET['start']; } else echo ''; ?>" />
-            <input type="hidden" name="end-date" value="<?php if ( isset ( $_GET['end'] ) ) { echo $_GET['end']; } else echo ''; ?>" />
-            <input type="hidden" name="export-list-xlsx" value="1" />
-        </form>
+        <?php
+            if ( $dashboard->getAction($_SESSION['ithcmute']['user_id'], 'can_export_reports') ) {
+                ?>
+                    <form action="reports.php" method="post">
+                        <button type="submit" class="btn blue pull-right">
+                            Xuất Báo Cáo
+                        </button>
+                        <input type="hidden" name="start-date" value="<?php if ( isset ( $_GET['start'] ) ) { echo $_GET['start']; } else echo ''; ?>" />
+                        <input type="hidden" name="end-date" value="<?php if ( isset ( $_GET['end'] ) ) { echo $_GET['end']; } else echo ''; ?>" />
+                        <input type="hidden" name="export-report-xlsx" value="1" />
+                    </form>
+                    <form action="reports.php" method="post">
+                        <button type="submit" class="btn blue pull-right">
+                            Xuất Câu hỏi
+                        </button>
+                        <input type="hidden" name="start-date" value="<?php if ( isset ( $_GET['start'] ) ) { echo $_GET['start']; } else echo ''; ?>" />
+                        <input type="hidden" name="end-date" value="<?php if ( isset ( $_GET['end'] ) ) { echo $_GET['end']; } else echo ''; ?>" />
+                        <input type="hidden" name="export-list-xlsx" value="1" />
+                    </form>
+                <?php
+            }
+        ?>
+        
         <br />
         <hr />
 

@@ -24,6 +24,11 @@ class Frontend extends Generic
 
             $this->validReCatcha();
         }
+
+        if ( isset( $_POST['permalink'] ) ) {
+            echo json_encode(array('result' => parent::vietnamese_permalink( $_POST['keyword'], true )));
+            exit();
+        }
     }
 
     private function newQuestion()

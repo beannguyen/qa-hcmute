@@ -24,19 +24,20 @@ if ( isset( $_POST['check_current_pass'] ) ) {
 
     return;
 }
+$userID = 0;
+if ( isset($_GET['user_id']) ) {
+    $userID = $_GET['user_id'];
+} else {
+    $userID = $_SESSION['ithcmute']['user_id'];
+}
 
 // get user information
 $sql = "SELECT users.*, terms.*
         FROM users, term_relationships, terms
         WHERE term_relationships.term_id = terms.term_id
-        AND users.user_id = term_relationships.object_id";
-if ( isset( $_GET['user_id'] ) ) {
+        AND users.user_id = term_relationships.object_id
+        AND users.user_id = " . $userID;
 
-    $sql .= " AND users.user_id = " . $_GET['user_id'];
-} else {
-
-    $sql .= " AND users.user_id = " . $_SESSION['ithcmute']['user_id'];
-}
 
 $query = $db->query( $sql );
 
@@ -234,6 +235,20 @@ if ( isset ( $_SESSION['ithcmute']['action_status'] ) ) {
         <!-- BEGIN PAGE CONTENT-->
         <div class="row profile">
             <div class="col-md-12">
+
+                <?php 
+                    if ( !$dashboard->getAction($_SESSION['ithcmute']['user_id'], 'can_edit_own_profile') &&  ($userID == $_SESSION['ithcmute']['user_id']) ) {
+
+                        echo "<h3>Bạn không có quyền truy cập trang này</h3>";
+                        return false;
+                    }
+
+                    if ( !$dashboard->getAction($_SESSION['ithcmute']['user_id'], 'can_edit_all_users_profile') &&  ($userID != $_SESSION['ithcmute']['user_id']) ) {
+
+                        echo "<h3>Bạn không có quyền truy cập trang này</h3>";
+                        return false;
+                    }
+                ?>
                 <!--BEGIN TABS-->
                 <?php if ( $userInfo !== false ) : ?>
                 <div class="tabbable tabbable-custom tabbable-full-width">

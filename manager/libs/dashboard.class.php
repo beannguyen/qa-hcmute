@@ -51,18 +51,34 @@ class Dashboard extends Generic
         // add and edit user position
         if (isset($_POST['position'])) {
 
+            $permissions = array();
+            foreach ($_POST as $key => $value) {
+                    
+                if ( $key !== 'position_name' && $key !== 'position_id' && $key !== 'position' ) {
+                    $permissions[$key] = $value;
+                }
+            }
             if ($_POST['position'] == 1) {
 
                 $positionName = $_POST['position_name'];
-                $this->addField($positionName, 'position');
+                $this->addField($positionName, 'position', $permissions);
             } else {
 
                 $data = array(
                     'id' => $_POST['position_id'],
                     'name' => $_POST['position_name']
                 );
-                $this->updateField($data);
+                $this->updateField($data, $permissions);
             }
+        }
+
+        // response permissions of a position
+        if ( isset($_POST['get_permission']) ) {
+            $this->getPermission($_POST['term_id']);
+        }
+
+        if ( isset($_POST['delete_position']) ) {
+            $this->deletePosition( $_POST['term_id'] );
         }
 
         // add and user
@@ -175,10 +191,19 @@ class Dashboard extends Generic
             $this->exportListQuestions();
         }
 
+        // bo dau keyword
+        if ( isset( $_POST['permalink'] ) ) {
+            echo json_encode(array('result' => parent::vietnamese_permalink( $_POST['keyword'], true )));
+            exit();
+        }
+
     }
 
     private function updateGeneralSetting($data)
     {
+        if ( !$dashboard->getAction($_SESSION['ithcmute']['user_id'], 'can_change_system_settings') ) {
+            return false;
+        }
         foreach ($data as $k => $v) {
 
             parent::updateOption($k, $v);
@@ -189,10 +214,30 @@ class Dashboard extends Generic
         exit();
     }
 
-    private function addField($fieldName, $type = 'field')
+    private function addField($fieldName, $type = 'field', $permissions = array())
     {
+        if ( !$dashboard->getAction($_SESSION['ithcmute']['user_id'], 'can_manager_fields') || !$dashboard->getAction($_SESSION['ithcmute']['user_id'], 'can_manager_positions') ) {
+            return false;
+        }
         $sql = "INSERT INTO terms(name, type) VALUES  ('" . $fieldName . "', '" . $type . "')";
         $query = $this->db->query($sql);
+
+        // get term_id
+        $termId = $this->db->insertid();
+        foreach ($permissions as $key => $value) {
+            
+            if ( $value === 'on' ) {
+                $sql = "INSERT INTO `tvsv`.`user_permission`
+                        (`pos_id`,
+                        `name`,
+                        `value`)
+                        VALUES
+                        (". $termId .",
+                        '". $key ."',
+                        1);";
+                $q = $this->db->query($sql);
+            }
+        }
 
         if ($query) {
 
@@ -205,10 +250,51 @@ class Dashboard extends Generic
         exit();
     }
 
-    private function updateField($data)
+    private function updateField($data, $permissions = array())
     {
         $sql = "UPDATE terms SET name = '" . $data['name'] . "' WHERE term_id = " . $data['id'];
         $query = $this->db->query($sql);
+
+        // get current permission
+        $sql = "SELECT name FROM user_permission WHERE pos_id = " . $data['id'];
+        $query = $this->db->query( $sql );
+        $currentPermissions = array();
+        while ($row = $this->db->fetch($query)) {
+            
+            $currentPermissions[$row['name']] = 1;
+        }
+
+        // insert new permission
+        foreach ($permissions as $key => $value) {
+            
+            if ( array_key_exists($key, $currentPermissions) ) {
+
+                // mark updated
+                $currentPermissions[$key] = 0;
+            } else {
+
+                $sql = "INSERT INTO `tvsv`.`user_permission`
+                        (`pos_id`,
+                        `name`,
+                        `value`)
+                        VALUES
+                        (". $data['id'] .",
+                        '". $key ."',
+                        1);";
+                $q = $this->db->query($sql);
+            }
+        }
+
+        // remove not select old permission
+        foreach ($currentPermissions as $key => $value) {
+            
+            if ($value == 1) {
+                
+                $sql = "DELETE FROM `tvsv`.`user_permission`
+                        WHERE name = '". $key ."' AND pos_id = " . $data['id'];
+                $this->db->query($sql);
+            }
+        }
 
         if ($query) {
 
@@ -218,11 +304,59 @@ class Dashboard extends Generic
         }
 
         URL::goBack();
+        exit();
+    }
+
+    public function getPermission( $termId ) 
+    {
+        $sql = "SELECT name, value FROM user_permission WHERE pos_id = " . $termId;
+        $query = $this->db->query($sql);
+        
+        $permissions = array();
+        $i = 0;
+        while( $result = $this->db->fetch($query) ) {
+
+            $permissions[$i]['key'] = $result['name'];
+            $permissions[$i]['value'] = $result['value'];
+            $i++;
+        }
+        
+        echo json_encode($permissions);
+        exit();
+    }
+
+    public function deletePosition( $termId ) {
+        
+        if ( !$dashboard->getAction($_SESSION['ithcmute']['user_id'], 'can_manager_positions') ) {
+            return false;
+        }
+        $sql = "SELECT object_id FROM tvsv.term_relationships WHERE term_id = " . $termId;
+        $query = $this->db->query($sql);
+
+        if ( $this->db->numrows( $query ) > 0 ) {
+            echo json_encode(array('status' => 'cannot_delete'));
+            exit();
+        }
+
+        // delete all permission rows
+        $sql = "DELETE FROM `user_permission`
+                WHERE pos_id = " . $termId;
+        $this->db->query($sql);
+
+        // delete term
+        $sql = "DELETE FROM `terms`
+                WHERE term_id = " . $termId;
+        $this->db->query($sql);
+
+        echo json_encode(array('status' => 'success'));
         exit();
     }
 
     private function addNewUser($data)
     {
+        if ( !$dashboard->getAction($_SESSION['ithcmute']['user_id'], 'can_add_new_user') )
+            return false;
+
         require_once('times.class.php');
         $timer = new timer();
 
@@ -303,6 +437,9 @@ class Dashboard extends Generic
 
     private function restrictUser($userId, $restricted)
     {
+        if ( $_SESSION['ithcmute']['user_id'] != 0 ) {
+            return false;
+        }
         $sql = "UPDATE users SET restricted = " . $restricted . " WHERE user_id = " . $userId;
         $this->db->query($sql);
 
@@ -313,6 +450,11 @@ class Dashboard extends Generic
 
     private function reply()
     {
+        // permission
+        if (!$this->getAction($_SESSION['ithcmute']['user_id'], 'can_answer_questions')) {
+            return false;
+        }
+
         $userId = $_SESSION['ithcmute']['user_id'];
         $questionId = $_POST['question_id'];
         $message = $_POST['message'];
@@ -426,6 +568,10 @@ class Dashboard extends Generic
 
     private function newQuestion()
     {
+
+        if ( !$this->getAction($_SESSION['ithcmute']['user_id'], 'can_add_admin_question') ) {
+            return false;
+        }
         foreach ( $_POST as $k => $v ) {
 
             if ( $k !== 'question' ) {
@@ -608,6 +754,11 @@ class Dashboard extends Generic
 
     private function spamQuestion( $questionId )
     {
+        // permission
+        if ( !$dashboard->getAction($_SESSION['ithcmute']['user_id'], 'can_mark_question_as_spam') ) {
+            return false;
+        }
+
         $sql = "UPDATE questions SET type = 'spam' WHERE id = " . $questionId;
         $this->db->query( $sql );
 
@@ -617,6 +768,11 @@ class Dashboard extends Generic
 
     private function deleteQuestion( $questionId )
     {
+        // permission
+        if ( !$dashboard->getAction($_SESSION['ithcmute']['user_id'], 'can_delete_question') ) {
+            return false;
+        }
+
         // delete field relationship
         $sql = "DELETE FROM term_relationships WHERE type = 'field' AND object_id = " . $questionId;
         $this->db->query( $sql );
@@ -689,6 +845,11 @@ class Dashboard extends Generic
 
     function exportExcel()
     {
+        // permission
+        if ( !$this->getAction($_SESSION['ithcmute']['user_id'], 'can_export_reports') ) {
+            return false;
+        }
+
         /** Error reporting */
         error_reporting(E_ALL);
         ini_set('display_errors', TRUE);
@@ -905,8 +1066,13 @@ class Dashboard extends Generic
 
     }
 
+    
     function exportListQuestions()
     {
+        // permission
+        if ( !$this->getAction($_SESSION['ithcmute']['user_id'], 'can_export_reports') ) {
+            return false;
+        }
         /** Error reporting */
         error_reporting(E_ALL);
         ini_set('display_errors', TRUE);
@@ -1037,6 +1203,10 @@ class Dashboard extends Generic
                     WHERE t2.term_id = ". $row['term_id'] ." 
                     AND t2.type = 'field' AND t1.id = t2.object_id
                     AND t1.i_am != 'admin'";
+
+            if ( isset($_POST['start-date'], $_POST['end-date'])) {
+                $sql .= " AND t1.date BETWEEN '". $_POST['start-date'] ."' AND '". $this->timer->add( '+1 day', $_POST['end-date'], 'Y/m/d' ) ."'";
+            };
             $q = $this->db->query($sql);
             $j = 0;
             while ($question = $this->db->fetch($q)) {
@@ -1054,6 +1224,7 @@ class Dashboard extends Generic
                         FROM answers as aw, QA_relationships as rel, users as usr
                         WHERE aw.id = rel.answer_id AND aw.author_id = usr.user_id
                         AND rel.question_id = " . $question['id'];
+
                 $qu = $this->db->query( $sql );
                 while ( $ans = $this->db->fetch($qu) ) {
                     

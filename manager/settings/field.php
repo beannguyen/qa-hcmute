@@ -190,6 +190,12 @@ if ( isset ( $_SESSION['ithcmute']['action-status'] ) ) {
     <!-- BEGIN PAGE CONTENT-->
     <div class="row">
         <div class="col-md-12">
+            <?php 
+                if ( !$dashboard->getAction($_SESSION['ithcmute']['user_id'], 'can_manager_fields') ) {
+                    echo "<h3>Bạn không có quyền truy cập vào trang này!</h3>";
+                    return false;
+                }
+            ?>
             <!-- BEGIN EXAMPLE TABLE PORTLET-->
             <div class="portlet box light-grey">
                 <div class="portlet-title">

@@ -24,6 +24,7 @@ $db->connect();
     <meta content="" name="author"/>
     <meta name="MobileOptimized" content="320">
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css"/>
     <link href="../assets/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
     <link href="../assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <link href="../assets/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css"/>
@@ -32,10 +33,10 @@ $db->connect();
     <link href="../assets/plugins/fancybox/source/jquery.fancybox.css" rel="stylesheet" />
     <!-- END PAGE LEVEL STYLES -->
     <!-- BEGIN THEME STYLES -->
-    <link href="../assets/css/style-metronic.css" rel="stylesheet" type="text/css"/>
     <link href="../assets/css/style.css" rel="stylesheet" type="text/css"/>
     <link href="../assets/css/style-responsive.css" rel="stylesheet" type="text/css"/>
     <link href="../assets/css/plugins.css" rel="stylesheet" type="text/css"/>
+    <link href="../assets/css/style-metronic.css" rel="stylesheet" type="text/css"/>
     <link href="../assets/css/themes/default.css" rel="stylesheet" type="text/css" id="style_color"/>
     <link href="../assets/css/pages/inbox.css" rel="stylesheet" type="text/css"/>
     <link href="../assets/css/pages/tasks.css" rel="stylesheet" type="text/css"/>
@@ -170,7 +171,7 @@ $db->connect();
             <div class="col-md-12">
                 <!-- BEGIN PAGE TITLE & BREADCRUMB-->
                 <h3 class="page-title">
-                    Tất cả các câu hỏi
+                    Quản lý câu hỏi
                 </h3>
                 <ul class="page-breadcrumb breadcrumb">
                     <li>
@@ -183,25 +184,12 @@ $db->connect();
                     </li>
                     <li class="category-filter pull-right">
                         <div class="btn-group">
-                            <a class="btn default red" href="#" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
-                                Lọc kết quả
-                                <i class="icon-angle-down"></i>
+                            <a href="javascript:window.history.back();" class="btn default btn-prev yellow-stripe">
+                                <i class="icon-angle-left"></i>
+                                <span class="hidden-480">
+                                    Quay lại
+                                </span>
                             </a>
-                            <ul class="dropdown-menu pull-right">
-                                <li><a href="questions.php"><i class="i"></i> Tất cả câu hỏi</a></li>
-                                <li class="divider"></li>
-                                <?php
-
-                                $query = $db->query( "SELECT * FROM terms WHERE type = 'field'" );
-
-                                while ( $row = $db->fetch( $query ) ) {
-
-                                    ?>
-                                    <li class="field-li"><a href="javascript:;" data-title="<?php echo $row['name']; ?>" data-toggle="<?php echo $row['term_id']; ?>"><?php echo $row['name']; ?></a></li>
-                                <?php
-                                }
-                                ?>
-                            </ul>
                         </div>
                     </li>
                 </ul>
@@ -214,17 +202,19 @@ $db->connect();
                     <li class="compose-btn">
                     </li>
                     <li class="inbox active">
-                        <a href="javascript:;" class="btn" data-title="Tất cả câu hỏi">Tất cả</a>
+                        <a href="questions.php?view=all" class="btn" data-title="Tất cả câu hỏi">Tất cả</a>
                         <b></b>
                     </li>
                     <li class="inbox-admin">
-                        <a href="javascript:;" class="btn" data-title="Tất cả câu hỏi nhập">DS câu hỏi nhập</a>
+                        <a href="questions.php?type=admin" class="btn" data-title="Tất cả câu hỏi nhập">DS câu hỏi nhập</a>
                         <b></b>
                     </li>
+                    <?php if ( $dashboard->getAction($_SESSION['ithcmute']['user_id'], 'can_add_admin_question') ): ?>
                     <li class="add">
                         <a href="#add_question" class="btn" data-toggle="modal">Thêm câu hỏi</a>
                         <b></b>
                     </li>
+                    <?php endif; ?>
                 </ul>
             </div>
             <div class="col-md-10">
@@ -272,6 +262,46 @@ $db->connect();
                     }
                     ?>
                 </div>
+                <div class="row" style="margin-bottom: 15px;">
+                    <div class="search-tools col-md-12">
+                        <form id="search-form" action="questions.php" method="get" class="form">
+                            <div class="form-group">
+                                <input type="hidden" name="action" value="search" />
+                                <div class="col-md-3">
+                                    <select name="question_type" id="question_type" class="form-control input-inline input-medium">
+                                        <option value="any">Tất cả câu hỏi</option>
+                                        <option value="admin">Câu hỏi nhập</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-3" style="margin-left:65px;">
+                                    <select name="question_field" id="question_field" class="form-control input-inline input-medium">
+                                        <option value="any">Lĩnh vực...</option>
+                                        <?php
+                                            $sql = "SELECT * FROM terms WHERE type = 'field'";
+                                            $q12 = $db->query( $sql );
+                                            while ( $row = $db->fetch( $q12 ) ) {
+                                                
+                                                echo "<option value='". $row['term_id'] ."'>". $row['name'] ."</option>";
+                                            }
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-4" style="margin-left:65px;">
+                                    <div class="input-group">
+                                        <input type="text" id="keyword" name="keyword" class="form-control" placeholder="Keyword...">
+                                        <span class="input-group-btn">
+                                            <button class="btn blue" type="submit"><i class="icon-search"></i></button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
                 <div class="inbox-loading">Loading...</div>
                 <div class="inbox-content"></div>
             </div>
@@ -280,6 +310,7 @@ $db->connect();
     <!-- END PAGE -->
 
     <!-- MODAL -->
+    <?php if ( $dashboard->getAction($_SESSION['ithcmute']['user_id'], 'can_add_admin_question') ): ?>
     <div class="modal fade bs-modal-lg in" id="add_question" tabindex="-1" role="basic" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -363,6 +394,7 @@ $db->connect();
         </div>
         <!-- /.modal-dialog -->
     </div>
+    <?php endif; ?>
     <!-- // MODAL -->
 </div>
 <!-- END CONTAINER -->
@@ -396,11 +428,13 @@ $db->connect();
 <script src="../assets/scripts/app.js"></script>
 <script src="../assets/scripts/inbox.js"></script>
 <script src="../assets/scripts/generic.js" type="text/javascript"></script>
+<script type="text/javascript" src="../assets/scripts/search-form.js"></script>
 <script>
     jQuery(document).ready(function () {
         // initiate layout and plugins
         App.init();
         Inbox.init();
+        SearchForm.init();
     });
 </script>
 <!-- END JAVASCRIPTS -->

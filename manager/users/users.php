@@ -237,6 +237,15 @@ if ( isset ( $_SESSION['ithcmute']['action_status'] ) ) {
     </div>
 </div>
 <div class="portlet-body">
+
+<?php 
+    if ( !$dashboard->getAction($_SESSION['ithcmute']['user_id'], 'can_view_all_users') ) {
+        echo "<h3>Bạn không có quyền truy cập vào trang này!</h3>";
+        return false;
+    }
+?>
+
+<?php if ( $dashboard->getAction($_SESSION['ithcmute']['user_id'], 'can_add_new_user') ): ?>
 <div class="table-toolbar">
     <div class="btn-group">
         <a class="btn green" data-toggle="modal" href="#add_user">Thêm tài khoản <i class="icon-plus"></i></a>
@@ -314,6 +323,7 @@ if ( isset ( $_SESSION['ithcmute']['action_status'] ) ) {
     <!-- /.modal-dialog -->
 </div>
 <!-- /.modal -->
+<?php endif; ?>
 
 
 <?php if ( $action_status === 'success' ) : ?>
@@ -344,7 +354,7 @@ while ( $row = $db->fetch( $query ) ) {
     ?>
     <tr class="odd gradeX">
         <td><a href="profile.php?user_id=<?php echo $row['user_id']; ?>"><?php echo $row['username']; ?></a></td>
-        <td><a href="<?php echo $row['email']; ?>"><?php echo $row['email']; ?></a></td>
+        <td><a href="profile.php?user_id=<?php echo $row['user_id']; ?>"><?php echo $row['email']; ?></a></td>
         <td><?php echo $row['name']; ?></td>
         <td class="center"><?php echo $row['registed_date']; ?></td>
         <td>

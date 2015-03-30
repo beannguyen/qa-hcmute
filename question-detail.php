@@ -54,6 +54,12 @@ $db->connect();
             <div class="portlet-title">
                 <div class="caption"></div>
                 <div id="action-bar" class="actions">
+                    <a href="javascript:window.history.back();" class="btn default btn-sm btn-prev yellow-stripe">
+                        <i class="icon-angle-left"></i>
+                        <span class="hidden-480">
+                            Quay lại
+                        </span>
+                    </a>
                     <a href="ask.php" class="btn btn-sm green"><i class="icon-plus"></i> Thêm câu hỏi</a>
                     <a href="index.php" class="btn btn-sm red"><i class="icon-bullhorn"></i>
                         Tất cả câu hỏi</a>

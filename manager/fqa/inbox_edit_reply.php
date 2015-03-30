@@ -7,7 +7,20 @@ $timer = new timer();
 $db = $dashboard->dbObj();
 $db->connect();
 
-if ( isset( $_GET['question_id'] ) ) {
+if ( isset( $_GET['question_id'], $_GET['answer_id'] ) ) {
+
+    if ( !is_numeric($_GET['question_id']) || !is_numeric($_GET['answer_id']) ) {
+        echo "<h2>Tìm kiếm không hợp lệ.</h2>";
+        return;
+    }
+
+    $sql = "SELECT * FROM QA_relationships WHERE question_id = ". $_GET['question_id'] ." AND answer_id = " . $_GET['answer_id'];
+    $query = $db->query($sql);
+    if ( $db->numrows($query) == 0 ) {
+        echo "<h2>Không tìm thấy câu hỏi hoặc câu trả lời được yêu cầu!</h2>";
+        return;
+    }
+
     $sql = "select questions.*
             from questions, term_relationships, terms
             where questions.id = term_relationships.object_id

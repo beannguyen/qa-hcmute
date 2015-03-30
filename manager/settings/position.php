@@ -190,6 +190,12 @@ if ( isset ( $_SESSION['ithcmute']['action-status'] ) ) {
     <!-- BEGIN PAGE CONTENT-->
     <div class="row">
         <div class="col-md-12">
+            <?php 
+                if ( !$dashboard->getAction($_SESSION['ithcmute']['user_id'], 'can_manager_positions') ) {
+                    echo "<h3>Bạn không có quyền truy cập vào trang này!</h3>";
+                    return false;
+                }
+            ?>
             <!-- BEGIN EXAMPLE TABLE PORTLET-->
             <div class="portlet box light-grey">
                 <div class="portlet-title">
@@ -213,16 +219,109 @@ if ( isset ( $_SESSION['ithcmute']['action-status'] ) ) {
                                             aria-hidden="true"></button>
                                     <h4 class="modal-title">Thêm chức vụ</h4>
                                 </div>
-                                <div class="modal-body form">
-                                    <form class="form-horizontal" action="position.php" method="post" role="form">
+                                <div class="modal-body form blue tabbable">
+                                    
+                                    <form id="positionForm" class="form-horizontal" action="position.php" method="post" role="form">
                                         <div class="form-body">
-                                            <div class="form-group">
-                                                <label class="col-md-3 control-label">Chức vụ</label>
+                                            <ul class="nav nav-tabs">
+                                                <li class="active">
+                                                    <a href="#tab_1_1" data-toggle="tab">
+                                                        Thông tin
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="#tab_1_2" data-toggle="tab">
+                                                        Phân quyền
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                            <div class="tab-content">
+                                                <div class="tab-pane fade active in" id="tab_1_1">
+                                                    <div class="form-group">
+                                                        <label class="col-md-3 control-label">Chức vụ</label>
 
-                                                <div class="col-md-9">
-                                                    <input type="hidden" id="position_id" name="position_id" />
-                                                    <input class="form-control" type="text" id="position_name" name="position_name">
-                                                    <input type="hidden" id="position_state" name="position" value="1" />
+                                                        <div class="col-md-9">
+                                                            <input type="hidden" id="position_id" name="position_id" />
+                                                            <input class="form-control" type="text" id="position_name" name="position_name">
+                                                            <input type="hidden" id="position_state" name="position" value="1" />
+                                                            <div class="checkbox delete_position display-hide">
+                                                                <label>
+                                                                <input id="delete_this_position" name="delete_this_position" type="checkbox"> Xóa chức vụ?</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>   
+                                                </div>
+                                                <div class="tab-pane fade" id="tab_1_2">
+                                                    <h4>Cài đặt hệ thống</h4>
+                                                    <hr />
+                                                    <div class="checkbox">
+                                                        <label>
+                                                        <input id="can_change_system_settings" name="can_change_system_settings" type="checkbox"> Sửa đổi cấu hình hệ thống?</label>
+                                                    </div>
+                                                    <div class="checkbox">
+                                                        <label>
+                                                        <input id="can_manager_fields" name="can_manager_fields" type="checkbox"> Quản lý các lĩnh vực câu hỏi?</label>
+                                                    </div>
+                                                    <div class="checkbox">
+                                                        <label>
+                                                        <input id="can_manager_positions" name="can_manager_positions" type="checkbox"> Quản lý chức vụ thành viên?</label>
+                                                    </div>
+
+                                                    <hr />
+                                                    <h4>Thành viên</h4>
+                                                    <hr />
+                                                    <div class="checkbox">
+                                                        <label>
+                                                        <input id="can_view_all_users" name="can_view_all_users" type="checkbox" checked> Xem tất cả các thành viên?</label>
+                                                    </div>
+                                                    <div class="checkbox">
+                                                        <label>
+                                                        <input id="can_add_new_user" name="can_add_new_user" type="checkbox"> Thêm mới thành viên?</label>
+                                                    </div>
+                                                    <div class="checkbox">
+                                                        <label>
+                                                        <input id="can_edit_own_profile" name="can_edit_own_profile" type="checkbox" checked> Sửa đổi thông tin cá nhân của mình?</label>
+                                                    </div>
+                                                    <div class="checkbox">
+                                                        <label>
+                                                        <input id="can_edit_all_users_profile" name="can_edit_all_users_profile" type="checkbox" > Sửa đổi thông tin tất cả thành viên?</label>
+                                                    </div>
+
+                                                    <hr />
+                                                    <h4>Câu hỏi</h4>
+                                                    <hr />
+                                                    <div class="checkbox">
+                                                        <label>
+                                                        <input id="can_answer_questions" name="can_answer_questions" type="checkbox" checked> Trả lời các câu hỏi?</label>
+                                                    </div>
+                                                    <div class="checkbox">
+                                                        <label>
+                                                        <input id="can_add_admin_question" name="can_add_admin_question" type="checkbox"> Thêm câu hỏi nhập?</label>
+                                                    </div>
+                                                    <div class="checkbox">
+                                                        <label>
+                                                        <input id="can_edit_own_answer" name="can_edit_own_answer" type="checkbox" checked> Sửa câu trả lời của mình?</label>
+                                                    </div>
+                                                    <div class="checkbox">
+                                                        <label>
+                                                        <input id="can_delete_own_answer" name="can_delete_own_answer" type="checkbox" checked> Xóa trả lời của mình?</label>
+                                                    </div>
+                                                    <div class="checkbox">
+                                                        <label>
+                                                        <input id="can_mark_question_as_spam" name="can_mark_question_as_spam" type="checkbox"> Đánh dấu câu hỏi rác?</label>
+                                                    </div>
+                                                    <div class="checkbox">
+                                                        <label>
+                                                        <input id="can_delete_question" name="can_delete_question" type="checkbox"> Xóa câu hỏi?</label>
+                                                    </div>
+
+                                                    <hr />
+                                                    <h4>Báo cáo</h4>
+                                                    <hr />
+                                                    <div class="checkbox">
+                                                        <label>
+                                                        <input id="can_export_reports" name="can_export_reports" type="checkbox"> Xuất file báo cáo?</label>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -318,22 +417,16 @@ if ( isset ( $_SESSION['ithcmute']['action-status'] ) ) {
 <script type="text/javascript" src="../assets/plugins/select2/select2.min.js"></script>
 <script type="text/javascript" src="../assets/plugins/data-tables/jquery.dataTables.js"></script>
 <script type="text/javascript" src="../assets/plugins/data-tables/DT_bootstrap.js"></script>
+<script type="text/javascript" src="../assets/plugins/jquery-validation/dist/jquery.validate.min.js"></script>
 <!-- END PAGE LEVEL PLUGINS -->
 <!-- BEGIN PAGE LEVEL SCRIPTS -->
 <script src="../assets/scripts/app.js" type="text/javascript"></script>
+<script src="../assets/scripts/position.js" type="text/javascript"></script>
 <!-- END PAGE LEVEL SCRIPTS -->
 <script>
-    function editField( id )
-    {
-        // set value to edit form
-        $('#position_id').val( id );
-        $('#position_name').val( $('#position-' + id).text() );
-        $('#position_state').val( 0 );
-        $('#submit-btn').text('Sửa');
-    }
     jQuery(document).ready(function () {
         App.init(); // initlayout and core plugins
-
+        positionForm.init();
         $('#add-field-btn').click( function() {
 
             $('#position_id').val( 0 );

@@ -553,7 +553,7 @@ class Generic extends Connect
         */
 
         if ( $search )
-            $replacement = '%';
+            $replacement = ' ';
         else
             $replacement = '-';
         $map = array();
@@ -669,24 +669,33 @@ class Generic extends Connect
      * @param $action
      * @return bool
      */
-    public function getPermission($userId, $action)
+    public function getAction($userId, $action)
     {
-        // get user level
-        $sql = "SELECT user_level FROM " . DB_PRE . "login_users WHERE user_id = " . $userId;
-        $query = $this->db->query($sql);
-        $level = $this->db->fetch($query);
-        $level = unserialize($level['user_level'])[0];
+        // admin are allow all action
+        if ( $userId == 0 ) {
+            return true;
+        }
+
+        // get user position
+        $sql = "SELECT term_id 
+                FROM term_relationships
+                WHERE object_id = ". $userId ."
+                AND type = 'position'";
+        $query = $this->db->query( $sql );
+        $result = $this->db->fetch( $query )['term_id'];
 
         // get permission
-        $sql = "SELECT permission FROM " . DB_PRE . "login_levels WHERE level_level = " . $level;
-        $query = $this->db->query($sql);
-        $permission = $this->db->fetch($query);
-        $permission = $permission['permission'];
+        $sql = "SELECT * 
+                FROM user_permission
+                WHERE pos_id = ". $result ."
+                AND name = '". $action ."'";
+        $query = $this->db->query( $sql );
+        
+        if ( $this->db->numrows( $query ) > 0 ) {
+            return true;
+        }
 
-        // check permission
-        $per = new Permission();
-        $per->setPermission($permission);
-        return $per->check($action);
+        return false;
     }
 
     /**

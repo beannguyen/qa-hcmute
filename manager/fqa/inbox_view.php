@@ -7,6 +7,16 @@ $timer = new timer();
 $db = $dashboard->dbObj();
 $db->connect();
 
+if ( !isset($_GET['id']) ) {
+    echo "<h2>Tìm kiếm không hợp lệ.</h2>";
+    return;
+}
+
+if ( !is_numeric($_GET['id']) ) {
+    echo "<h2>Tìm kiếm không hợp lệ.</h2>";
+    return;
+}
+
 $sql = "select questions.*
         from questions, term_relationships, terms
         where questions.id = term_relationships.object_id
@@ -14,6 +24,12 @@ $sql = "select questions.*
         and term_relationships.type = 'field'
         and questions.id = " . $_GET['id'];
 $query = $db->query( $sql );
+
+if ( $db->numrows( $query) == 0 ) {
+    echo "<h2>Không tìm thấy câu hỏi yêu cầu!</h2>";
+    return;
+}
+
 $result = $db->fetch( $query );
 
 ?>
@@ -105,18 +121,20 @@ $result = $db->fetch( $query );
         <!-- /.modal -->
         <div class="col-md-5 inbox-info-btn">
             <div class="btn-group">
-                <button class="btn blue reply-btn <?php if ( $result['type'] === 'spam' ) echo 'disabled'; ?>" data-action="<?php echo $result['id']; ?>">
+                <button class="btn blue reply-btn <?php if ( $result['type'] === 'spam' ) echo 'disabled'; ?>" data-action="<?php echo $result['id']; ?>" <?php echo ($dashboard->getAction($_SESSION['ithcmute']['user_id'], 'can_answer_questions')) ? '' : 'disabled'; ?>>
                     <i class="icon-reply"></i> Trả lời
                 </button>
                 <button class="btn blue  dropdown-toggle" data-toggle="dropdown">
                     <i class="icon-angle-down"></i>
                 </button>
                 <ul class="dropdown-menu pull-right">
-                    <?php if ( $result['type'] !== 'spam' ): ?>
+                    <?php if ( $result['type'] !== 'spam' && $dashboard->getAction($_SESSION['ithcmute']['user_id'], 'can_mark_question_as_spam') ): ?>
                     <li><a href="javascript:;" class="spam_btn" data-action="<?php echo $result['id']; ?>"><i class="icon-ban-circle"></i> Spam</a></li>
                     <?php endif; ?>
+                    <?php if ( $dashboard->getAction($_SESSION['ithcmute']['user_id'], 'can_delete_question') ) : ?>
                     <li><a href="javascript:;" class="delete_btn" data-action="<?php echo $result['id']; ?>"><i class="icon-trash"></i> Delete Question</a></li>
-                 </ul>
+                    <?php endif; ?>
+                </ul>
             </div>
         </div>
     </div>
@@ -163,12 +181,14 @@ $result = $db->fetch( $query );
 
     <ul class="chats">
     <?php
+
     $sql = "SELECT tb1.*, tb3.*
             FROM answers as tb1, QA_relationships as tb2, users as tb3
             WHERE tb1.id = tb2.answer_id
             AND tb1.author_id = tb3.user_id
             AND tb2.question_id = " . $result['id'];
     $query = $db->query( $sql );
+
     while ( $row = $db->fetch( $query ) ) {
 
         ?>
@@ -185,7 +205,14 @@ $result = $db->fetch( $query );
                                  <span class="body item-content-<?php echo $row['id']; ?>"><?php echo html_entity_decode($row['content']); ?></span>
                 <?php if ( $row['author_id'] == $_SESSION['ithcmute']['user_id'] ) { ?>
                     <br />
-                    <span><button class="btn green btn-xs edit_answer" data-action="<?php echo $row['id']; ?>" data-question="<?php echo $result['id']; ?>">Edit</button> | <button class="btn red btn-xs delete_answer_btn" data-action="<?php echo $row['id']; ?>">Delete</button> </span>
+                    <span>
+                        <?php if ($dashboard->getAction($_SESSION['ithcmute']['user_id'], 'can_edit_own_answer')): ?>
+                            <button class="btn green btn-xs edit_answer" data-action="<?php echo $row['id']; ?>" data-question="<?php echo $result['id']; ?>">Edit</button>
+                        <?php endif; ?>
+                        <?php if ($dashboard->getAction($_SESSION['ithcmute']['user_id'], 'can_delete_own_answer')): ?>
+                         | <button class="btn red btn-xs delete_answer_btn" data-action="<?php echo $row['id']; ?>">Delete</button>
+                        <?php endif; ?> 
+                    </span>
                 <?php } ?>
             </div>
         </li>

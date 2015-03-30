@@ -64,7 +64,7 @@ $db->connect();
                     <i class="icon-angle-down"></i>
                 </a>
                 <ul class="dropdown-menu">
-                    <li><a href="<?php echo BASE_PATH; ?>manager/users/profile.php"><i class="icon-user"></i> My Profile</a>
+                    <li><a href="<?php echo BASE_PATH; ?>manager/users/profile.php?user_id=<?php echo $_SESSION['ithcmute']['user_id']; ?>"><i class="icon-user"></i> My Profile</a>
                     </li>
                     <li class="divider"></li>
                     <li><a href="javascript:;" id="trigger_fullscreen"><i class="icon-move"></i> Full Screen</a>
@@ -125,6 +125,9 @@ $db->connect();
                     </li>
                     <li>
                         <a href="<?php echo BASE_PATH; ?>manager/users/profile.php">Trang cá nhân</a>
+                    </li>
+                    <li>
+                        <a href="<?php echo BASE_PATH; ?>manager/users/group.php">Nhóm tài khoản</a>
                     </li>
                 </ul>
             </li>
