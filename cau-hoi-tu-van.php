@@ -10,7 +10,9 @@ $timer = new timer();
 $db = $frontend->dbObj();
 $db->connect();
 ?>
-
+<html>
+<head>
+<meta charset="utf-8"/>
 <link href="manager/assets/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
 <link href="manager/assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
 <style type="text/css">
@@ -42,6 +44,8 @@ $db->connect();
     	padding-right: 5px;
 	}
 </style>
+</head>
+<body>
 <?php
 $sql = "SELECT * FROM questions WHERE questions.type = 'public' AND questions.i_am = 'admin' ORDER BY date DESC";
 $query = $db->query( $sql );
@@ -76,3 +80,5 @@ while ($row = $db->fetch($query)) {
 
 <script src="manager/assets/plugins/jquery-1.10.2.min.js" type="text/javascript"></script>
 <script src="manager/assets/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+</body>
+</html>
