@@ -60,9 +60,21 @@ $db->connect();
                             Quay lại
                         </span>
                     </a>
-                    <a href="ask.php" class="btn btn-sm green"><i class="icon-plus"></i> Thêm câu hỏi</a>
-                    <a href="index.php" class="btn btn-sm red"><i class="icon-bullhorn"></i>
-                        Tất cả câu hỏi</a>
+                    <?php if (isset($_GET['type'])) {
+                        if ( $_GET['type'] !== 'news_view') {
+                            ?>
+                            <a href="ask.php" class="btn btn-sm green"><i class="icon-plus"></i> Thêm câu hỏi</a>
+                            <a href="index.php" class="btn btn-sm red"><i class="icon-bullhorn"></i>
+                                Tất cả câu hỏi</a>
+                            <?php
+                        }
+                    } else {
+                        ?>
+                            <a href="ask.php" class="btn btn-sm green"><i class="icon-plus"></i> Thêm câu hỏi</a>
+                            <a href="index.php" class="btn btn-sm red"><i class="icon-bullhorn"></i>
+                                Tất cả câu hỏi</a>
+                        <?php
+                        }?>
                 </div>
             </div>
             <div class="portlet-body" id="chats">
@@ -89,7 +101,7 @@ $db->connect();
                                 <span class="datetime">lúc <?php echo $timer->timeFormat( $question['date'], 'd-m-Y H:i'); ?></span>
                                  <span class="body">
                                  <strong><em><?php echo $question['title']; ?></em></strong><br />
-                                     <?php echo $question['content']; ?>
+                                     <?php echo html_entity_decode($question['content']); ?>
                                  </span>
                             </div>
                         </li>
@@ -114,9 +126,9 @@ $db->connect();
                                     <span class="arrow"></span>
                                     <a class="name"><?php echo $row['fullname']; ?></a>
                                     <span class="datetime">lúc <?php echo $row['date']; ?></span>
-                                 <span class="body">
+                                 <div class="body">
                                  <?php echo html_entity_decode($row['content']); ?>
-                                 </span>
+                                 </div>
                                 </div>
                             </li>
                         <?php

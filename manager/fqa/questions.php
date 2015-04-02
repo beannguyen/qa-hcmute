@@ -325,15 +325,10 @@ $db->connect();
                             <button type="submit" class="btn blue"><i class="icon-check"></i>Submit</button>
                         </div>
                         <div class="inbox-form-group mail-to">
-                            <label class="control-label"></label>
+                            <label class="control-label">Tiêu đề</label>
 
                             <div class="controls">
-                                <?php
-                                $sql = "SELECT count(*) as num FROM questions WHERE i_am = 'admin'";
-                                $query = $db->query( $sql );
-                                $n = $db->fetch($query)['num'] + 1;
-                                ?>
-                                <input type="text" class="form-control" name="author_name" value="Câu hỏi <?php echo $n; ?>" disabled>
+                                <input type="text" class="form-control" name="title" value="">
                             </div>
                         </div>
 
@@ -351,14 +346,6 @@ $db->connect();
                                     }
                                     ?>
                                 </select>
-                            </div>
-                        </div>
-
-                        <div class="inbox-form-group display-hide">
-                            <label class="control-label">Tiêu đề:</label>
-
-                            <div class="controls">
-                                <input type="text" class="form-control" name="title" value="">
                             </div>
                         </div>
                         <div class="inbox-form-group">

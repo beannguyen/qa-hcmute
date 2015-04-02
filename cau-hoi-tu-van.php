@@ -43,23 +43,23 @@ $db->connect();
 	}
 </style>
 <?php
-$sql = "SELECT * FROM questions WHERE questions.type = 'public' AND questions.i_am = 'admin'";
+$sql = "SELECT * FROM questions WHERE questions.type = 'public' AND questions.i_am = 'admin' ORDER BY date DESC";
 $query = $db->query( $sql );
 
-echo '<div class="col-md-4 col-sm-3">';
+echo '<div class="col-md-6 col-sm-4">';
 echo '<ul>';
 $i = 0;
 while ($row = $db->fetch($query)) {
 	if ( $i == 0 ) {
 		?>
 			<div class="row">
-				<a class="title" href="">Hỏi: <?php echo $row['title'] ?>? - <span class="date"><?php echo $timer->timeFormat($row['date'], 'd/m/Y'); ?></span></a>
+				<a class="title" href="question-detail.php?id=<?php echo $row['id'] ?>&type=news_view">Hỏi: <?php echo $row['title'] ?>? - <span class="date"><?php echo $timer->timeFormat($row['date'], 'd/m/Y'); ?></span></a>
 				<hr />
 			</div>
 	<?php
 	} else {
 		?>
-			<li>Hỏi: <a href="#"><?php echo $row['title'] ?>?</a> - <span class="date"><?php echo $timer->timeFormat($row['date'], 'd/m/Y'); ?></span></li>
+			<li>Hỏi: <a href="question-detail.php?id=<?php echo $row['id'] ?>&type=news_view"><?php echo $row['title'] ?>?</a> - <span class="date"><?php echo $timer->timeFormat($row['date'], 'd/m/Y'); ?></span></li>
 	<?php 
 	}
 	?>

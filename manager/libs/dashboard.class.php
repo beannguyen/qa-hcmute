@@ -201,7 +201,7 @@ class Dashboard extends Generic
 
     private function updateGeneralSetting($data)
     {
-        if ( !$dashboard->getAction($_SESSION['ithcmute']['user_id'], 'can_change_system_settings') ) {
+        if ( !$this->getAction($_SESSION['ithcmute']['user_id'], 'can_change_system_settings') ) {
             return false;
         }
         foreach ($data as $k => $v) {
@@ -216,7 +216,7 @@ class Dashboard extends Generic
 
     private function addField($fieldName, $type = 'field', $permissions = array())
     {
-        if ( !$dashboard->getAction($_SESSION['ithcmute']['user_id'], 'can_manager_fields') || !$dashboard->getAction($_SESSION['ithcmute']['user_id'], 'can_manager_positions') ) {
+        if ( !$this->getAction($_SESSION['ithcmute']['user_id'], 'can_manager_fields') || !$this->getAction($_SESSION['ithcmute']['user_id'], 'can_manager_positions') ) {
             return false;
         }
         $sql = "INSERT INTO terms(name, type) VALUES  ('" . $fieldName . "', '" . $type . "')";
@@ -327,7 +327,7 @@ class Dashboard extends Generic
 
     public function deletePosition( $termId ) {
         
-        if ( !$dashboard->getAction($_SESSION['ithcmute']['user_id'], 'can_manager_positions') ) {
+        if ( !$this->getAction($_SESSION['ithcmute']['user_id'], 'can_manager_positions') ) {
             return false;
         }
         $sql = "SELECT object_id FROM tvsv.term_relationships WHERE term_id = " . $termId;
@@ -354,7 +354,7 @@ class Dashboard extends Generic
 
     private function addNewUser($data)
     {
-        if ( !$dashboard->getAction($_SESSION['ithcmute']['user_id'], 'can_add_new_user') )
+        if ( !$this->getAction($_SESSION['ithcmute']['user_id'], 'can_add_new_user') )
             return false;
 
         require_once('times.class.php');
@@ -521,7 +521,7 @@ class Dashboard extends Generic
         }
 
         $_SESSION['ithcmute']['action_status'] = 'sent';
-        URL::redirect_to(BASE_PATH . 'manager/fqa/questions.php');
+        URL::redirect_to(BASE_PATH . 'manager/fqa/questions.php?view=message&qId=' . $question_id);
         exit();
     }
 
@@ -579,6 +579,7 @@ class Dashboard extends Generic
                 $data[$k] = parent::secure($v);
             }
         }
+
         $data['author_stuID'] = 0;
         $data['author_email'] = "";
 
@@ -587,7 +588,6 @@ class Dashboard extends Generic
         $n = $this->db->fetch($query)['num'] + 1;
         $data['author_name'] = "Câu hỏi " . $n;
         $data['i_am'] = 'admin';
-        $data['title'] = parent::split_words($data['content'], 150, '...');
 
         // add question information
         $sql = "INSERT INTO `questions`
@@ -755,7 +755,7 @@ class Dashboard extends Generic
     private function spamQuestion( $questionId )
     {
         // permission
-        if ( !$dashboard->getAction($_SESSION['ithcmute']['user_id'], 'can_mark_question_as_spam') ) {
+        if ( !$this->getAction($_SESSION['ithcmute']['user_id'], 'can_mark_question_as_spam') ) {
             return false;
         }
 
@@ -769,7 +769,7 @@ class Dashboard extends Generic
     private function deleteQuestion( $questionId )
     {
         // permission
-        if ( !$dashboard->getAction($_SESSION['ithcmute']['user_id'], 'can_delete_question') ) {
+        if ( !$this->getAction($_SESSION['ithcmute']['user_id'], 'can_delete_question') ) {
             return false;
         }
 
@@ -839,7 +839,7 @@ class Dashboard extends Generic
         $debug = $sender->send($to, $subj, $msg, $headers);
 
         $_SESSION['ithcmute']['action_status'] = 'success';
-        URL::goBack();
+        URL::redirect_to('questions.php?view=message&qId=' . $_POST['question_id']);
         exit();
     }
 
@@ -962,7 +962,8 @@ class Dashboard extends Generic
             // count number of question
             $sql = "SELECT count(object_id) as nums
                     FROM term_relationships inner join questions on term_relationships.object_id = questions.id
-                    WHERE term_id = " . $row['term_id'];
+                    WHERE questions.i_am != 'admin' 
+                    AND term_id = " . $row['term_id'];
             if ( $start !== '' && $end !== '' )
                 $sql .= " and questions.date between '". $start ."' and '". $end ."'";
             $q = $this->db->query( $sql );
@@ -1201,11 +1202,12 @@ class Dashboard extends Generic
             $sql = "SELECT t1.*
                     FROM questions as t1, term_relationships as t2
                     WHERE t2.term_id = ". $row['term_id'] ." 
-                    AND t2.type = 'field' AND t1.id = t2.object_id
+                    AND t2.type = 'field' 
+                    AND t1.id = t2.object_id
                     AND t1.i_am != 'admin'";
 
             if ( isset($_POST['start-date'], $_POST['end-date'])) {
-                $sql .= " AND t1.date BETWEEN '". $_POST['start-date'] ."' AND '". $this->timer->add( '+1 day', $_POST['end-date'], 'Y/m/d' ) ."'";
+                $sql .= " AND t1.date BETWEEN '". $_POST['start-date'] ."' AND '". $this->timer->add( '+1 day', $_POST['end-date'], 'Y-m-d' ) ."'";
             };
             $q = $this->db->query($sql);
             $j = 0;

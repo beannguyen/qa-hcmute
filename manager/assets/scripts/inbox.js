@@ -107,8 +107,6 @@ var Inbox = function () {
 
                 loading.hide();
                 content.html(res);
-                if ( $('.wysihtml5-toolbar').length == 0 )
-                    initWysihtml5_2();
                 App.fixContentHeight();
                 App.initUniform();
             },
@@ -386,9 +384,10 @@ var Inbox = function () {
                 async: false,
                 success: function (responseText) {
 
+                    console.log(responseText);
                     if ( responseText === '1' ) {
 
-                        window.location = $(location).attr('href');
+                        window.location.href = "questions.php?view=all";
                     }
                 }
             });
@@ -606,6 +605,10 @@ var Inbox = function () {
             } else {
                window.location.href = "questions.php?view=all";
             }
+
+            // load editor toolbar
+            if ( $('.wysihtml5-toolbar').length == 0 )
+                    initWysihtml5_2();
 
         }
 

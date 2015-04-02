@@ -142,13 +142,15 @@ $db->connect();
                                 from terms as t1, term_relationships as t2, questions as t3
                                 where t1.term_id = t2.term_id
                                 and t2.object_id = t3.id
+                                AND t3.i_am != 'admin'
                                 and t2.type = 'field'";
 
                         if ( isset( $_GET['start'], $_GET['end'] ) )
-                            $sql .= " and t3.date between '". $_GET['start'] ."' and '". $timer->add( '+1 day', $_GET['end'], 'Y/m/d' ) ."'";
+                            $sql .= " and t3.date between '". $_GET['start'] ."' and '". $timer->add( '+1 day', $_GET['end'], 'Y-m-d' ) ."'";
 
                         $sql .= " group by t2.term_id
                                 order by nums desc";
+
                         $query = $db->query($sql);
                         $i = 1;
                         while ($row = $db->fetch($query)) {
