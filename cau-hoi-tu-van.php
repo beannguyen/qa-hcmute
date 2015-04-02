@@ -50,7 +50,7 @@ $db->connect();
 $sql = "SELECT * FROM questions WHERE questions.type = 'public' AND questions.i_am = 'admin' ORDER BY date DESC";
 $query = $db->query( $sql );
 
-echo '<div class="col-md-6 col-sm-4">';
+echo '<div class="col-md-6 col-sm-4" style="margin-top: 10px">';
 echo '<ul>';
 $i = 0;
 while ($row = $db->fetch($query)) {
