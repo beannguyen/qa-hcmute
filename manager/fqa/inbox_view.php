@@ -129,10 +129,13 @@ $result = $db->fetch( $query );
                 </button>
                 <ul class="dropdown-menu pull-right">
                     <?php if ( $result['type'] !== 'spam' && $dashboard->getAction($_SESSION['ithcmute']['user_id'], 'can_mark_question_as_spam') ): ?>
-                    <li><a href="javascript:;" class="spam_btn" data-action="<?php echo $result['id']; ?>"><i class="icon-ban-circle"></i> Spam</a></li>
+                    <li><a href="javascript:;" class="spam_btn" data-action="<?php echo $result['id']; ?>"><i class="icon-ban-circle"></i> Đánh dấu spam</a></li>
+                    <?php endif; ?>
+                    <?php if ( $dashboard->getAction($_SESSION['ithcmute']['user_id'], 'can_edit_questions') ) : ?>
+                    <li><a href="questions.php?view=edit&qId=<?php echo $result['id']; ?>" class="edit_btn" data-action="<?php echo $result['id']; ?>"><i class="icon-pencil"></i> Sửa câu hỏi</a></li>
                     <?php endif; ?>
                     <?php if ( $dashboard->getAction($_SESSION['ithcmute']['user_id'], 'can_delete_question') ) : ?>
-                    <li><a href="javascript:;" class="delete_btn" data-action="<?php echo $result['id']; ?>"><i class="icon-trash"></i> Delete Question</a></li>
+                    <li><a href="javascript:;" class="delete_btn" data-action="<?php echo $result['id']; ?>"><i class="icon-trash"></i> Xóa câu</a></li>
                     <?php endif; ?>
                 </ul>
             </div>

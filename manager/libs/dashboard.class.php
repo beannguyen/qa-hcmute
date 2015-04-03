@@ -197,6 +197,28 @@ class Dashboard extends Generic
             exit();
         }
 
+        if ( isset($_POST['edit_question']) ) {
+            $this->editQuestion();
+        }
+
+    }
+
+    private function editQuestion()
+    {
+        if ( !$this->getAction($_SESSION['ithcmute']['user_id'], 'can_edit_questions') ) {
+            return false;
+        }
+
+        $sql = "UPDATE `questions`
+                        SET
+                        `title` = '". $_POST['subject'] ."',
+                        `content` = '". $_POST['q_content'] ."',
+                        `type` = '". $_POST['type'] ."'
+                        WHERE `id` = " . $_POST['question_id'];
+        $query = $this->db->query( $sql );
+        $_SESSION['ithcmute']['action-status'] = 'success';
+        URL::redirect_to('questions.php?view=message&qId=' . $_POST['question_id']);
+        exit();
     }
 
     private function updateGeneralSetting($data)

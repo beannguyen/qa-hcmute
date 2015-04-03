@@ -296,6 +296,10 @@ if ( isset ( $_SESSION['ithcmute']['action-status'] ) ) {
                                                     </div>
                                                     <div class="checkbox">
                                                         <label>
+                                                        <input id="can_edit_questions" name="can_edit_questions" type="checkbox" checked> Sửa các câu hỏi?</label>
+                                                    </div>
+                                                    <div class="checkbox">
+                                                        <label>
                                                         <input id="can_add_admin_question" name="can_add_admin_question" type="checkbox"> Thêm câu hỏi nhập?</label>
                                                     </div>
                                                     <div class="checkbox">

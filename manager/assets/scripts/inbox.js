@@ -309,6 +309,42 @@ var Inbox = function () {
         });
     }
 
+    var loadEditQuestion = function(el) {
+        var url = 'edit_question.php?id=' + App.getURLParameter('qId');
+
+        loading.show();
+        content.html('');
+        toggleButton(el);
+
+        // load the form via ajax
+        $.ajax({
+            type: "GET",
+            cache: false,
+            url: url,
+            dataType: "html",
+            success: function(res) 
+            {
+                toggleButton(el);
+
+                $('.inbox-nav > li.active').removeClass('active');
+                $('.inbox-header > h1').text('Reply');
+
+                loading.hide();
+                content.html(res);
+                $('[name="message"]').val($('#reply_email_content_body').html());
+
+
+                App.fixContentHeight();
+                App.initUniform();
+            },
+            error: function(xhr, ajaxOptions, thrownError)
+            {
+                toggleButton(el);
+            },
+            async: false
+        });
+    };
+
     var loadEditReply = function (el, answerId, questionId) {
         var url = 'inbox_edit_reply.php?question_id=' + App.getURLParameter('qId') + '&answer_id=' + App.getURLParameter('aId');
 
@@ -602,6 +638,8 @@ var Inbox = function () {
                 loadReply($(this));
             } else if ( App.getURLParameter('view') === 'edit_answer' ) {
                 loadEditReply($(this));
+            } else if (App.getURLParameter('view') === 'edit') {
+                loadEditQuestion($(this));
             } else {
                window.location.href = "questions.php?view=all";
             }

@@ -57,9 +57,12 @@ while ($row = $db->fetch($query)) {
 	if ( $i == 0 ) {
 		?>
 			<div class="row">
-				<a class="title" href="question-detail.php?id=<?php echo $row['id'] ?>&type=news_view">Hỏi: <?php echo $row['title'] ?>? - <span class="date"><?php echo $timer->timeFormat($row['date'], 'd/m/Y'); ?></span></a>
+				<a class="title" href="question-detail.php?id=<?php echo $row['id'] ?>&type=news_view">Hỏi: <?php echo $row['title'] ?>? - <span class="date"><?php echo $timer->timeFormat($row['date'], 'd/m/Y'); ?></span> <img src="http://fit.hcmute.edu.vn/Resources/ImagePhoto/new.gif"></a>
+			</div>
+			<div class="row">
 				<hr />
 			</div>
+			<div class="row">
 	<?php
 	} else {
 		?>
@@ -75,6 +78,7 @@ while ($row = $db->fetch($query)) {
 		$i++;
 }
 ?>
+</div>
 </ul>
 </div>
 

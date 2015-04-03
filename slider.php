@@ -63,6 +63,7 @@ $db->connect();
                             and questions.id = QA_relationships.question_id
                             and term_relationships.type = 'field'
                             and questions.type = 'public'
+                            and questions.i_am != 'admin'
                             group by QA_relationships.question_id
                             order by questions.date desc
                             limit 20";
