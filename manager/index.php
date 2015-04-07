@@ -126,9 +126,6 @@ $db->connect();
                     <li>
                         <a href="<?php echo BASE_PATH; ?>manager/users/profile.php">Trang cá nhân</a>
                     </li>
-                    <li>
-                        <a href="<?php echo BASE_PATH; ?>manager/users/group.php">Nhóm tài khoản</a>
-                    </li>
                 </ul>
             </li>
             <li class="">

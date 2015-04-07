@@ -241,8 +241,7 @@ if ( isset ( $_SESSION['ithcmute']['action_status'] ) ) {
 <?php 
     if ( !$dashboard->getAction($_SESSION['ithcmute']['user_id'], 'can_view_all_users') ) {
         echo "<h3>Bạn không có quyền truy cập vào trang này!</h3>";
-        return false;
-    }
+    } else {
 ?>
 
 <?php if ( $dashboard->getAction($_SESSION['ithcmute']['user_id'], 'can_add_new_user') ): ?>
@@ -383,8 +382,11 @@ while ( $row = $db->fetch( $query ) ) {
 </div>
 <!-- END CONTAINER -->
 
+
 <!-- BEGIN FOOTER -->
 <?php include('../footer.php'); ?>
+
+<?php } ?>
 <!-- END FOOTER -->
 <!-- BEGIN JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) -->
 <!-- BEGIN CORE PLUGINS -->

@@ -240,14 +240,13 @@ if ( isset ( $_SESSION['ithcmute']['action_status'] ) ) {
                     if ( !$dashboard->getAction($_SESSION['ithcmute']['user_id'], 'can_edit_own_profile') &&  ($userID == $_SESSION['ithcmute']['user_id']) ) {
 
                         echo "<h3>Bạn không có quyền truy cập trang này</h3>";
-                        return false;
-                    }
+                    } else {
 
                     if ( !$dashboard->getAction($_SESSION['ithcmute']['user_id'], 'can_edit_all_users_profile') &&  ($userID != $_SESSION['ithcmute']['user_id']) ) {
 
                         echo "<h3>Bạn không có quyền truy cập trang này</h3>";
                         return false;
-                    }
+                    } else {
                 ?>
                 <!--BEGIN TABS-->
                 <?php if ( $userInfo !== false ) : ?>
@@ -417,9 +416,10 @@ if ( isset ( $_SESSION['ithcmute']['action_status'] ) ) {
         <!-- END PAGE -->
     </div>
     <!-- END CONTAINER -->
-
     <!-- BEGIN FOOTER -->
     <?php include('../footer.php'); ?>
+    <?php } ?>
+    <?php } ?>
     <!-- END FOOTER -->
     <!-- BEGIN JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) -->
     <!-- BEGIN CORE PLUGINS -->
