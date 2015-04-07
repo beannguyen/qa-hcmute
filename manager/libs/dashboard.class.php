@@ -543,7 +543,7 @@ class Dashboard extends Generic
         }
 
         $_SESSION['ithcmute']['action_status'] = 'sent';
-        URL::redirect_to(BASE_PATH . 'manager/fqa/questions.php?view=message&qId=' . $question_id);
+        URL::redirect_to(BASE_PATH . 'manager/fqa/questions.php?view=message&qId=' . $questionId);
         exit();
     }
 
@@ -984,10 +984,9 @@ class Dashboard extends Generic
             // count number of question
             $sql = "SELECT count(object_id) as nums
                     FROM term_relationships inner join questions on term_relationships.object_id = questions.id
-                    WHERE questions.i_am != 'admin' 
-                    AND term_id = " . $row['term_id'];
+                    WHERE term_id = " . $row['term_id'];
             if ( $start !== '' && $end !== '' )
-                $sql .= " and questions.date between '". $start ."' and '". $end ."'";
+                $sql .= " and questions.date between '". $start ."' and '". $this->timer->add( '+1 day', $end, 'Y-m-d' ) ."'";
             $q = $this->db->query( $sql );
             $count = $this->db->fetch( $q )['nums'];
 
@@ -1225,8 +1224,7 @@ class Dashboard extends Generic
                     FROM questions as t1, term_relationships as t2
                     WHERE t2.term_id = ". $row['term_id'] ." 
                     AND t2.type = 'field' 
-                    AND t1.id = t2.object_id
-                    AND t1.i_am != 'admin'";
+                    AND t1.id = t2.object_id";
 
             if ( isset($_POST['start-date'], $_POST['end-date'])) {
                 $sql .= " AND t1.date BETWEEN '". $_POST['start-date'] ."' AND '". $this->timer->add( '+1 day', $_POST['end-date'], 'Y-m-d' ) ."'";
