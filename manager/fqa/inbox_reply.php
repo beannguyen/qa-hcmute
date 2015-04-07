@@ -84,8 +84,9 @@ if ( isset( $_GET['id'] ) ) {
                         "insertdatetime media nonbreaking save table contextmenu directionality",
                         "emoticons template paste textcolor colorpicker textpattern"
                     ],
-                    toolbar1: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link preview",
+                    toolbar1: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | pastetext | bullist numlist outdent indent | link preview",
                     image_advtab: true,
+                    paste_as_text: true,
                     templates: [
                         {title: 'Test template 1', content: 'Test 1'},
                         {title: 'Test template 2', content: 'Test 2'}

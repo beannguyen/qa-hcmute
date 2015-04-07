@@ -193,8 +193,8 @@ if ( isset ( $_SESSION['ithcmute']['action-status'] ) ) {
             <?php 
                 if ( !$dashboard->getAction($_SESSION['ithcmute']['user_id'], 'can_manager_positions') ) {
                     echo "<h3>Bạn không có quyền truy cập vào trang này!</h3>";
-                    return false;
-                }
+                    
+                } else {
             ?>
             <!-- BEGIN EXAMPLE TABLE PORTLET-->
             <div class="portlet box light-grey">
@@ -398,6 +398,7 @@ if ( isset ( $_SESSION['ithcmute']['action-status'] ) ) {
 
 <!-- BEGIN FOOTER -->
 <?php include('../footer.php'); ?>
+<?php } ?>
 <!-- END FOOTER -->
 <!-- BEGIN JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) -->
 <!-- BEGIN CORE PLUGINS -->

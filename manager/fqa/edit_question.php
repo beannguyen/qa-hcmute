@@ -82,7 +82,7 @@ if ( isset( $_GET['id'] ) ) {
                         "insertdatetime media nonbreaking save table contextmenu directionality",
                         "emoticons template paste textcolor colorpicker textpattern"
                     ],
-                    toolbar1: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link preview",
+                    toolbar1: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | pastetext | bullist numlist outdent indent | link preview",
                     image_advtab: true,
                     setup: function(ed){
                         ed.on("init",

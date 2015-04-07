@@ -211,8 +211,8 @@ if ( isset( $_SESSION['ithcmute']['action-status'] ) ) {
                 <?php 
                     if ( !$dashboard->getAction($_SESSION['ithcmute']['user_id'], 'can_change_system_settings') ) {
                         echo "<h3>Bạn không có quyền truy cập vào trang này!</h3>";
-                        return false;
-                    }
+                        
+                    } else {
                 ?>
                 <div class="portlet">
                     <div class="portlet-title">
@@ -274,6 +274,7 @@ if ( isset( $_SESSION['ithcmute']['action-status'] ) ) {
 
     <!-- BEGIN FOOTER -->
     <?php include('../footer.php'); ?>
+    <?php } ?>
     <!-- END FOOTER -->
     <!-- BEGIN JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) -->
     <!-- BEGIN CORE PLUGINS -->
