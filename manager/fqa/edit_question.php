@@ -14,7 +14,7 @@ if ( isset( $_GET['id'] ) ) {
         return;
     }
     
-    $sql = "select questions.*
+    $sql = "select questions.*, terms.term_id
             from questions, term_relationships, terms
             where questions.id = term_relationships.object_id
             and terms.term_id = term_relationships.term_id
@@ -29,7 +29,7 @@ if ( isset( $_GET['id'] ) ) {
     $result = $db->fetch( $query );
 ?>
 
-<form class="inbox-compose form-horizontal" id="fileupload" action="inbox_reply.php" method="POST">
+<form class="inbox-compose form-horizontal" id="fileupload" action="edit_question.php" method="POST">
     <div class="inbox-compose-btn">
         <button type="submit" class="btn blue"><i class="icon-check"></i>Send</button>
     </div>
@@ -48,12 +48,22 @@ if ( isset( $_GET['id'] ) ) {
             <input type="text" class="form-control" id="subject" name="subject" value="<?php echo $result['title']; ?>" >
         </div>
     </div>
-    <!-- <div class="inbox-form-group">
-        <label class="control-label">Nội dung</label>
+    <div class="inbox-form-group">
+        <label class="control-label">Lĩnh vực:</label>
+
         <div class="controls">
-            <span style="padding: 5px;"><?php echo html_entity_decode($result['content']); ?></span>
+            <select class="form-control question-field" name="question_field">
+                <?php
+                    $sql = "SELECT * FROM terms WHERE type = 'field'";
+                    $q12 = $db->query( $sql );
+                    while ( $row = $db->fetch( $q12 ) ) {
+                                                
+                        echo "<option value='". $row['term_id'] ."'>". $row['name'] ."</option>";
+                    }
+                ?>
+            </select>
         </div>
-    </div> -->
+    </div>
     <div class="inbox-form-group">
         <label  class="control-label margin-right-20">Chế độ</label>
         <div class="radio-list">
@@ -106,12 +116,7 @@ if ( isset( $_GET['id'] ) ) {
 </form>
 
     <script type="text/javascript">
-        function insertContent(  )
-        {
-            console.log('loadded');
-            var content = "<?php echo html_entity_decode($result['content']); ?>";
-            tinyMCE.activeEditor.insertContent("<?php echo html_entity_decode($result['content']); ?>")
-        }
+        $('.question-field').val('<?php echo $result["term_id"] ?>');
     </script>
     <!-- // FORM GOI Y -->
 <?php } ?>

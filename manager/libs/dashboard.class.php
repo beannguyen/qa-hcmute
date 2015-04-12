@@ -216,6 +216,14 @@ class Dashboard extends Generic
                         `type` = '". $_POST['type'] ."'
                         WHERE `id` = " . $_POST['question_id'];
         $query = $this->db->query( $sql );
+
+        // update field
+        $sql = "UPDATE `term_relationships`
+                SET
+                `term_id` = ". $_POST['question_field'] .
+                " WHERE type = 'field' AND `object_id` = " . $_POST['question_id'];
+        $this->db->query($sql);
+
         $_SESSION['ithcmute']['action-status'] = 'success';
         URL::redirect_to('questions.php?view=message&qId=' . $_POST['question_id']);
         exit();

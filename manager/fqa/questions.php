@@ -410,7 +410,7 @@ $db->connect();
 <script src="../assets/plugins/bootstrap3-wysihtml5/lib/js/wysihtml5x-toolbar.min.js"></script>
 <script src="../assets/plugins/bootstrap3-wysihtml5/src/bootstrap3-wysihtml5.js"></script>
 <script src="../assets/plugins/bootstrap-wysihtml5/advanced.js" type="text/javascript"></script>
-<script type="text/javascript" src="../assets/plugins/jquery-validation/dist/jquery.validate.min.js"></script>
+<script type="text/javascript" src="../assets/plugins/jquery-validation/jquery.validate.min.js"></script>
 <!-- END: Page level plugins -->
 <script src="../assets/scripts/app.js"></script>
 <script src="../assets/scripts/inbox.js"></script>

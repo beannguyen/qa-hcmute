@@ -422,7 +422,7 @@ if ( isset ( $_SESSION['ithcmute']['action-status'] ) ) {
 <script type="text/javascript" src="../assets/plugins/select2/select2.min.js"></script>
 <script type="text/javascript" src="../assets/plugins/data-tables/jquery.dataTables.js"></script>
 <script type="text/javascript" src="../assets/plugins/data-tables/DT_bootstrap.js"></script>
-<script type="text/javascript" src="../assets/plugins/jquery-validation/dist/jquery.validate.min.js"></script>
+<script type="text/javascript" src="../assets/plugins/jquery-validation/jquery.validate.min.js"></script>
 <!-- END PAGE LEVEL PLUGINS -->
 <!-- BEGIN PAGE LEVEL SCRIPTS -->
 <script src="../assets/scripts/app.js" type="text/javascript"></script>
