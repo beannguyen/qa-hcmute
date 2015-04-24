@@ -915,6 +915,11 @@ class Dashboard extends Generic
         $q = $this->db->query( $sql );
         $user = $this->db->fetch( $q );
 
+        // get author avatar
+        $sql = "SELECT * FROM user_meta WHERE user_id = " . $_SESSION['ithcmute']['user_id'] . " AND meta_key = 'profile_img'";
+        $q = $this->db->query( $sql );
+        $avatar = $this->db->fetch($q)['meta_value'];
+
         // send an email to user
         $headers = 'MIME-Version: 1.0' . "\r\n";
         $headers .= 'Content-type: text/html; charset=utf-8' . "\r\n";
@@ -925,7 +930,12 @@ class Dashboard extends Generic
         $subj = "BQT đã chỉnh sửa câu trả lời cho câu câu hỏi : '" . $question['title'] . "'";
         $subj = "=?utf-8?b?" . base64_encode($subj) . "?=";
         $msg = '<strong>Question: </strong><blockquote>' . $question['content'] . '</blockquote><br /><hr />';
-        $msg .= '<strong>Chỉnh sửa bởi '. $user['fullname'] .': </strong>' . $_POST['message_edited'] . '<br /> (' . $date = $this->timer->getDateTime() . ')';
+        //$msg .= '<strong>Chỉnh sửa bởi '. $user['fullname'] .': </strong>' . $_POST['message_edited'] . '<br /> (' . $date = $this->timer->getDateTime() . ')';
+        $msg .= '<div class="content" style="width:100%;">';
+        $msg .= '<div class="float: left;"><img src="'. BASE_PATH . $avatar .'" alt="'. $user['fullname'] .'" /></div>';
+        $msg .= '<div class="float: left;"><strong>Chỉnh sửa bởi '. $user['fullname'] .': </strong>' . $_POST['message_edited'] . '<br /> (' . $date = $this->timer->getDateTime() . ')</div>';
+        $msg .= '<div style="clear: both"></div>';
+        $msg .= '</div>';
         // init mailer
         $sender = new Mailer();
         $debug = $sender->send($to, $subj, $msg, $headers);

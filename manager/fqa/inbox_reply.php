@@ -96,6 +96,10 @@ if ( isset( $_GET['id'] ) ) {
             </div>
         </div>
     </div>
+    <div class="inbox-form-group">
+        <label for="exampleInputFile1">File input</label>
+        <input type="file" id="exampleInputFile1">
+    </div>
     <input type="hidden" id="question_id" name="question_id" value="<?php echo $result['id']; ?>">
     <input type="hidden" name="reply" value="1" />
     <div class="inbox-compose-btn">

@@ -383,11 +383,20 @@ if ( isset ( $_SESSION['ithcmute']['action_status'] ) ) {
                                                 <table class="table table-bordered table-striped">
                                                     <tr>
                                                         <td>
-                                                            Khóa tài khoản
+                                                            <?php 
+                                                                $sql = "SELECT restricted FROM users WHERE user_id = " . $userInfo['user_id'];
+                                                                $q = $db->query($sql);
+                                                                $isRestricted = $db->fetch($q)['restricted'];
+                                                            ?>
+                                                            <?php if ( $isRestricted === '0' ): ?>
+                                                                Tick để khóa tài khoản
+                                                            <?php else: ?>
+                                                                Tick để mở khóa tài khoản
+                                                            <?php endif; ?>
                                                         </td>
                                                         <td>
                                                             <label class="uniform-inline">
-                                                                <input type="checkbox" name="user_restricted" value="1" /> Yes
+                                                                <input type="checkbox" name="user_restricted" value="<?php echo ($isRestricted === '1') ? 0 : 1; ?>" /> <?php echo ($isRestricted === '1') ? 'mở khóa' : 'khóa tài khoản'; ?>
                                                             </label>
                                                         </td>
                                                     </tr>

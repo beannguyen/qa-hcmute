@@ -346,7 +346,6 @@ $sql = "SELECT users.*, terms.*
         WHERE term_relationships.term_id = terms.term_id
         AND users.user_id = term_relationships.object_id";
 $query = $db->query( $sql );
-
 while ( $row = $db->fetch( $query ) ) {
 
     ?>
