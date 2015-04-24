@@ -94,8 +94,6 @@ if ( isset( $_SESSION['ithcmute']['action-status'] ) ) {
                     <li><a href="<?php echo BASE_PATH; ?>manager/users/profile.php"><i class="icon-user"></i> My Profile</a>
                     </li>
                     <li class="divider"></li>
-                    <li><a href="javascript:;" id="trigger_fullscreen"><i class="icon-move"></i> Full Screen</a>
-                    </li>
                     <li><a href="../logout.php"><i class="icon-key"></i> Log Out</a>
                     </li>
                 </ul>

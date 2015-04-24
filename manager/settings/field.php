@@ -77,8 +77,6 @@ if ( isset ( $_SESSION['ithcmute']['action-status'] ) ) {
                     <li><a href="<?php echo BASE_PATH; ?>manager/users/profile.php"><i class="icon-user"></i> My Profile</a>
                     </li>
                     <li class="divider"></li>
-                    <li><a href="javascript:;" id="trigger_fullscreen"><i class="icon-move"></i> Full Screen</a>
-                    </li>
                     <li><a href="../logout.php"><i class="icon-key"></i> Log Out</a>
                     </li>
                 </ul>
@@ -231,6 +229,14 @@ if ( isset ( $_SESSION['ithcmute']['action-status'] ) ) {
                                                     <input type="hidden" id="field_state" name="field" value="1" />
                                                 </div>
                                             </div>
+
+                                            <div class="form-group">
+                                                <label class="col-md-3 control-label">Xóa lĩnh vực</label>
+                                                <div class="checkbox-list col-md-9">
+                                                    <label>
+                                                    <input id="delete_field" type="checkbox"> xóa </label>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="form-actions fluid">
                                             <div class="col-md-offset-3 col-md-9">
@@ -348,6 +354,32 @@ if ( isset ( $_SESSION['ithcmute']['action-status'] ) ) {
             $('#field_state').val( 1 );
             $('#submit-btn').text('Tạo');
         })
+
+        $('#delete_field').click(function() {
+                var check = confirm('Bạn có muốn xóa lĩnh vực này?');
+                if ( check ) {
+                    //$("span.reset-loading").html("<img src='"+ getRootWebSitePath() +"/manager/assets/img/loading.gif'>");
+                    var field_id = $('#field_id').val();
+                    var datastring = 'delete_field=1&field_id=' + field_id;
+
+                    $.ajax({
+                        type: "POST",
+                        url: "field.php",
+                        data: datastring,
+                        async: false,
+                        success: function (responseText) {
+                            console.log(responseText);
+                            if( responseText === 'can_not_delete' ) {
+                                alert('Lĩnh vực không thể xóa vì đã hoạt động!');
+                                $('#delete_field').click();
+                            } else {
+                                alert('Lĩnh vực đã được xóa');
+                                window.location.reload();
+                            }
+                        }
+                    });
+                }
+            });
     });
 </script>
 <!-- END JAVASCRIPTS -->

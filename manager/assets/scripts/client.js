@@ -58,7 +58,7 @@ var Client = function () {
                 },
                 title: {
                     required: true,
-                    maxlength: 100
+                    maxlength: 255
                 },
                 content: {
                     required: true
@@ -85,7 +85,7 @@ var Client = function () {
                 },
                 title: {
                     required: "Hãy nhập tiêu đề câu hỏi",
-                    maxlength: "Tiêu đề chỉ dài 45 ký tự"
+                    maxlength: "Tiêu đề chỉ dài 300 ký tự"
                 },
                 content: {
                     required: "Nhập nội dung câu hỏi"

@@ -115,8 +115,6 @@ if ( isset ( $_SESSION['ithcmute']['action_status'] ) ) {
                     <li><a href="<?php echo BASE_PATH; ?>manager/users/profile.php"><i class="icon-user"></i> My Profile</a>
                     </li>
                     <li class="divider"></li>
-                    <li><a href="javascript:;" id="trigger_fullscreen"><i class="icon-move"></i> Full Screen</a>
-                    </li>
                     <li><a href="../logout.php"><i class="icon-key"></i> Log Out</a>
                     </li>
                 </ul>
@@ -334,6 +332,7 @@ if ( isset ( $_SESSION['ithcmute']['action_status'] ) ) {
 <thead>
 <tr>
     <th>Tên đăng nhập</th>
+    <th>Họ tên</th>
     <th>Email</th>
     <th>Chức vụ</th>
     <th>Ngày tham gia</th>
@@ -353,6 +352,7 @@ while ( $row = $db->fetch( $query ) ) {
     ?>
     <tr class="odd gradeX">
         <td><a href="profile.php?user_id=<?php echo $row['user_id']; ?>"><?php echo $row['username']; ?></a></td>
+        <td><a href="profile.php?user_id=<?php echo $row['user_id']; ?>"><?php echo $row['fullname']; ?></a></td>
         <td><a href="profile.php?user_id=<?php echo $row['user_id']; ?>"><?php echo $row['email']; ?></a></td>
         <td><?php echo $row['name']; ?></td>
         <td class="center"><?php echo $row['registed_date']; ?></td>
@@ -410,7 +410,7 @@ while ( $row = $db->fetch( $query ) ) {
 <script type="text/javascript" src="../assets/plugins/select2/select2.min.js"></script>
 <script type="text/javascript" src="../assets/plugins/data-tables/jquery.dataTables.js"></script>
 <script type="text/javascript" src="../assets/plugins/data-tables/DT_bootstrap.js"></script>
-<script type="text/javascript" src="../assets/plugins/jquery-validation/dist/jquery.validate.min.js"></script>
+<script type="text/javascript" src="../assets/plugins/jquery-validation/jquery.validate.min.js"></script>
 <!-- END PAGE LEVEL PLUGINS -->
 <!-- BEGIN PAGE LEVEL SCRIPTS -->
 <script src="../assets/scripts/app.js" type="text/javascript"></script>

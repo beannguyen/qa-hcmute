@@ -14,6 +14,10 @@ var Inbox = function () {
             ignore: "",
             onkeyup: false,
             rules: {
+                title: {
+                    required: true,
+                    maxlength: 300
+                },
                 message: {
                     required: true
                 }
@@ -22,6 +26,10 @@ var Inbox = function () {
             messages: {
                 message: {
                     required: "Bạn chưa nhập nội dung trả lời"
+                },
+                title: {
+                    required: "Hãy nhập tiêu đề câu hỏi",
+                    maxlength: "Tiêu đề chỉ dài 300 ký tự"
                 }
             },
 

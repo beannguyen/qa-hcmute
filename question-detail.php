@@ -100,8 +100,7 @@ $db->connect();
                                 <strong class="name"><?php echo $question['author_name']; ?></strong>
                                 <span class="datetime">lúc <?php echo $timer->timeFormat( $question['date'], 'd-m-Y H:i'); ?></span>
                                  <span class="body">
-                                 <strong><em><?php echo $question['title']; ?></em></strong><br />
-                                     <?php echo html_entity_decode($question['content']); ?>
+                                     <strong><em><?php echo html_entity_decode($question['content']); ?></em></strong>
                                  </span>
                             </div>
                         </li>

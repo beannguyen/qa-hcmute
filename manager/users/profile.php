@@ -116,8 +116,6 @@ if ( isset ( $_SESSION['ithcmute']['action_status'] ) ) {
                     <li><a href="<?php echo BASE_PATH; ?>manager/users/profile.php"><i class="icon-user"></i> My Profile</a>
                     </li>
                     <li class="divider"></li>
-                    <li><a href="javascript:;" id="trigger_fullscreen"><i class="icon-move"></i> Full Screen</a>
-                    </li>
                     <li><a href="../logout.php"><i class="icon-key"></i> Log Out</a>
                     </li>
                 </ul>
@@ -270,6 +268,13 @@ if ( isset ( $_SESSION['ithcmute']['action_status'] ) ) {
                                         <?php if ( $_SESSION['ithcmute']['user_id'] == 0 ) : ?>
                                             <li ><a id="reset-submit" href="javascript:;"><i class="icon-lock"></i> Reset mật khẩu <span class="reset-loading"></span></a></li>
                                         <?php endif; ?>
+                                        
+                                        <?php if( isset($_GET['user_id']) ): ?>
+                                        <?php if($_SESSION['ithcmute']['user_id'] != $_GET['user_id']): ?>
+                                        <li ><a id="delete_this_user" href="javascript:;" data-action="<?php echo $_GET['user_id']; ?>"><i class="icon-camera"></i> Xóa tài khoản</a></li>
+                                        <?php endif; ?>
+                                        <?php endif; ?>
+
                                         <li ><a data-toggle="tab" href="#tab_3-4"><i class="icon-camera"></i> Ảnh đại diện</a></li>
                                         <?php if ( $_SESSION['ithcmute']['user_id'] == 0 ) : ?>
                                         <li ><a data-toggle="tab" href="#tab_4-4"><i class="icon-eye-open"></i> Phân quyền</a></li>
@@ -438,7 +443,7 @@ if ( isset ( $_SESSION['ithcmute']['action_status'] ) ) {
     <script src="../assets/plugins/jquery.blockui.min.js" type="text/javascript"></script>
     <script src="../assets/plugins/jquery.cookie.min.js" type="text/javascript"></script>
     <script src="../assets/plugins/uniform/jquery.uniform.min.js" type="text/javascript"></script>
-    <script type="text/javascript" src="../assets/plugins/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="../assets/plugins/jquery-validation/jquery.validate.min.js"></script>
     <!-- END CORE PLUGINS -->
     <!-- BEGIN PAGE LEVEL SCRIPTS -->
     <script src="../assets/scripts/app.js" type="text/javascript"></script>

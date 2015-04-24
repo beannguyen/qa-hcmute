@@ -201,6 +201,50 @@ class Dashboard extends Generic
             $this->editQuestion();
         }
 
+        if ( isset($_POST['delete_user']) ) {
+            $this->deleteUser($_POST['user_id']);
+        }
+
+        if ( isset($_POST['delete_field'] ) ) {
+            $this->deleteField($_POST['field_id']);
+        }
+
+    }
+
+    private function deleteField($fieldId) 
+    {
+        $sql = "SELECT * FROM term_relationships WHERE term_id = " . $fieldId . " AND type = 'field'";
+        $query = $this->db->query($sql);
+
+        if ( $this->db->numrows($query) > 0 ) {
+            echo "can_not_delete";
+            exit();
+        }
+
+        $sql = "DELETE FROM terms WHERE term_id = " . $fieldId;
+        $this->db->query($sql);
+
+        echo "success";
+        exit();
+    }
+
+    private function deleteUser($userId) 
+    {
+        // neu user khong co cau tl nao
+        $sql = "SELECT * FROM answers WHERE author_id = " . $userId;
+        $query = $this->db->query($sql);
+        if ( $this->db->numrows($query) > 0 ) {
+            echo "can_not_delete";
+            exit();
+        }
+
+        $sql = "DELETE FROM user_meta WHERE user_id = " . $userId;
+        $this->db->query($sql);
+        $sql = "DELETE FROM users WHERE user_id = " . $userId;
+        $this->db->query($sql);
+
+        echo "success";
+        exit();
     }
 
     private function editQuestion()
@@ -532,6 +576,11 @@ class Dashboard extends Generic
         $q = $this->db->query( $sql );
         $user = $this->db->fetch( $q );
 
+        // get author avatar
+        $sql = "SELECT * FROM user_meta WHERE user_id = " . $_SESSION['ithcmute']['user_id'] . " AND meta_key = 'profile_img'";
+        $q = $this->db->query( $sql );
+        $avatar = $this->db->fetch($q)['meta_value'];
+
         if ( $question['i_am'] !== 'admin' ) {
 
             // send an email to user
@@ -544,7 +593,11 @@ class Dashboard extends Generic
             $subj = "BQT đã trả lời câu hỏi : '" . $question['title'] . "'";
             $subj = "=?utf-8?b?" . base64_encode($subj) . "?=";
             $msg = '<strong>Question: </strong><blockquote>' . $question['content'] . '</blockquote><br /><hr />';
-            $msg .= '<strong>Answer by '. $user['fullname'] .': </strong>' . $message . '<br /> (' . $date . ')';
+            $msg .= '<div class="content" style="width:100%;">';
+            $msg .= '<div class="float: left;"><img src="'. BASE_PATH . $avatar .'" alt="'. $user['fullname'] .'" /></div>';
+            $msg .= '<div class="float: left;"><strong>Answer by '. $user['fullname'] .': </strong>' . $message . '<br /> (' . $date . ')</div>';
+            $msg .= '<div style="clear: both"></div>';
+            $msg .= '</div>';
             // init mailer
             $sender = new Mailer();
             $debug = $sender->send($to, $subj, $msg, $headers);
@@ -651,7 +704,7 @@ class Dashboard extends Generic
 
         // add reply
         $sql = "INSERT INTO answers(author_id, content, date)
-                VALUES (0, '". $data['message'] ."', '". $this->timer->getDateTime() ."')";
+                VALUES (" . $_SESSION['ithcmute']['user_id'] . ", '". $data['message'] ."', '". $this->timer->getDateTime() ."')";
         $query = $this->db->query( $sql );
         $answerId = $this->db->insertid( $query );
 
@@ -808,8 +861,17 @@ class Dashboard extends Generic
         $this->db->query( $sql );
 
         // delete Q&A relationships
-        $sql = "DELETE FROM QA_relationships WHERE question_id = " . $questionId;
-        $this->db->query( $sql );
+        $sql = "SELECT * FROM QA_relationships WHERE question_id = " . $questionId;
+        $query = $this->db->query($sql);
+
+        while ($ans = $this->db->fetch($query)) {
+            
+            $sql = "DELETE FROM QA_relationships WHERE question_id = " . $questionId . " AND answer_id = " . $ans['answer_id'];
+            $this->db->query( $sql );
+
+            $sql = "DELETE FROM answers WHERE id = " . $ans['answer_id'];
+            $this->db->query($sql);
+        }
 
         $sql = "DELETE FROM questions WHERE id = " . $questionId;
         $this->db->query( $sql );

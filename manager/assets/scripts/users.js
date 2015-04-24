@@ -159,6 +159,7 @@ var Users = function () {
         $('#users_management').dataTable({
             "aoColumns": [
                 null,
+                null,
                 { "bSortable": false },
                 null,
                 { "bSortable": false },

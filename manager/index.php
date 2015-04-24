@@ -67,8 +67,6 @@ $db->connect();
                     <li><a href="<?php echo BASE_PATH; ?>manager/users/profile.php?user_id=<?php echo $_SESSION['ithcmute']['user_id']; ?>"><i class="icon-user"></i> My Profile</a>
                     </li>
                     <li class="divider"></li>
-                    <li><a href="javascript:;" id="trigger_fullscreen"><i class="icon-move"></i> Full Screen</a>
-                    </li>
                     <li><a href="logout.php"><i class="icon-key"></i> Log Out</a>
                     </li>
                 </ul>

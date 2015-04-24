@@ -79,9 +79,12 @@ if ( isset( $_GET['id'] ) ) {
     </div>
     <div class="inbox-form-group">
         <div class="controls-row">
+            <input type="hidden" id="content" value="<?php echo $result['content']; ?>" />
             <textarea class="inbox-editor form-control q_content" id="q_content" name="q_content" rows="12"></textarea>
             <script type="text/javascript" src="../assets/plugins/tinymce/tinymce.min.js"></script>
             <script type="text/javascript">
+                var content = $('#content').val();
+                console.log(content);
                 tinymce.init({
                     selector: "textarea.q_content",
                     theme: "modern",
@@ -97,7 +100,7 @@ if ( isset( $_GET['id'] ) ) {
                     setup: function(ed){
                         ed.on("init",
                                 function(ed) {
-                                tinyMCE.activeEditor.setContent("<?php echo html_entity_decode($result['content']); ?>");
+                                tinyMCE.activeEditor.setContent(content);
                                 tinyMCE.activeEditor.execCommand('mceRepaint');
 
                                 }

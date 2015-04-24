@@ -102,23 +102,53 @@ var Profile = function () {
             
             $('#reset-submit').click(function () {
 
-                $("span.reset-loading").html("<img src='"+ getRootWebSitePath() +"/manager/assets/img/loading.gif'>");
-                var user_id = $('#change_password_form #user_id').val();
-                var datastring = 'reset_password=1&user_id=' + user_id;
+                var check = confirm('Bạn có muốn reset mật khẩu?');
+                if ( check ) {
 
-                $.ajax({
-                    type: "POST",
-                    url: "profile.php",
-                    data: datastring,
-                    async: false,
-                    success: function (responseText) {
+                    $("span.reset-loading").html("<img src='"+ getRootWebSitePath() +"/manager/assets/img/loading.gif'>");
+                    var user_id = $('#change_password_form #user_id').val();
+                    var datastring = 'reset_password=1&user_id=' + user_id;
 
-                        // console.log( responseText );
-                        $("span.reset-loading").html("");
-                        $('.alert-new-password').text( 'Mật khẩu mới của bạn là: ' + responseText + '. Vui lòng kiểm tra Email người dùng để lấy mật khẩu mới.' );
-                        $('.alert-new-password').show();
-                    }
-                });
+                    $.ajax({
+                        type: "POST",
+                        url: "profile.php",
+                        data: datastring,
+                        async: false,
+                        success: function (responseText) {
+
+                            // console.log( responseText );
+                            $("span.reset-loading").html("");
+                            $('.alert-new-password').text( 'Mật khẩu mới của bạn là: ' + responseText + '. Vui lòng kiểm tra Email người dùng để lấy mật khẩu mới.' );
+                            $('.alert-new-password').show();
+                        }
+                    });
+                }
+            });
+
+            $('#delete_this_user').click(function() {
+                var check = confirm('Bạn có muốn xóa tài khoản này?');
+                if ( check ) {
+                    $("span.reset-loading").html("<img src='"+ getRootWebSitePath() +"/manager/assets/img/loading.gif'>");
+                    var user_id = $(this).attr('data-action');
+                    var datastring = 'delete_user=1&user_id=' + user_id;
+
+                    $.ajax({
+                        type: "POST",
+                        url: "profile.php",
+                        data: datastring,
+                        async: false,
+                        success: function (responseText) {
+                            console.log(responseText);
+                            if( responseText === 'can_not_delete' ) {
+                                alert('Tải khoản không thể xóa vì đã hoạt động!');
+                                $("span.reset-loading").html("");
+                            } else {
+                                alert('Tài khoản đã được xóa');
+                                window.location.href = "users.php";
+                            }
+                        }
+                    });
+                }
             });
         }
     }
